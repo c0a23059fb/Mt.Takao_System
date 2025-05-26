@@ -1,0 +1,112 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #f1f1f1;
+}
+
+.home-screen {
+  width: 100%;
+  height: 100%;
+  background: url("{{ url_for('static', filename='images/ui_base.png') }}") no-repeat center center;
+  background-size: cover;
+  
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.home-container {
+  max-width: 420px;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.app-header {
+  background: #007bff;
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1.5rem;
+}
+
+.search-bar {
+  
+  margin-top: 1rem;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+}
+
+.search-bar button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+#searchResults {
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.menu-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-align: center;
+}
+
+.menu-item:hover {
+  transform: translateY(-3px);
+}
+
+.menu-item img {
+  width: 60px;
+  height: 60px;
+}
+
+.menu-item p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.main-visual {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.main-visual img {
+  width: 90%;            /* ← 画面の90%に抑える */
+  height: auto;
+  max-width: 360px;      /* ← 上限を明示的に制限 */
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.catchphrase {
+  font-size: 1.2rem;
+  color: #444;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
