@@ -22,6 +22,37 @@
       height: auto;
       display: block;
     }
+    .quick-actions {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .action-button {
+      text-align: center;
+      margin: 0 1rem;
+      cursor: pointer;
+    }
+    .action-button img {
+      max-width: 100%;
+      height: auto;
+    }
+    .search-section {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .search-section input {
+      width: 80%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .card-list {
+      /* 各径路の情報を知る、スタンプの位置を探すなど */
+    }
+    .horizontal-scroll-gallery {
+      /* 小さな径路写真を横スクロール */
+    }
   </style>
 </head>
 <body>
@@ -34,12 +65,17 @@
   </div>
 
   <div class="quick-actions">
-    <div class="action-button">QRコード</div>
-    <div class="action-button">周辺のお店</div>
+    <div class="action-button" onclick="navigateToQR()">
+      <img src="{{ url_for('static', filename='images/qr.png') }}" alt="QRコード">
+      <p>QRコード</p>
+    </div>
+    <div class="divider"></div>
+    <div class="action-button" onclick="navigateToShop()">
+      <img src="{{ url_for('static', filename='images/shop.png') }}" alt="周辺検索">
+      <p>周辺検索</p>
+    </div>
   </div>
-  <div class="nav-bar">
-    <!-- ホーム、ルート、QRなどのアイコンボタン -->
-  </div>
+
   <div class="search-section">
     <input type="text" placeholder="店名、種類などで検索">
   </div>
@@ -49,5 +85,17 @@
   <div class="horizontal-scroll-gallery">
     <!-- 小さな径路写真を横スクロール -->
   </div>
+
+  <script>
+    function navigateToQR() {
+      // QRコード読み取りページに遷移
+      window.location.href = "/qr_road";
+    }
+
+    function navigateToShop() {
+      // 周辺店舗検索ページに遷移
+      window.location.href = "/shop";
+    }
+  </script>
 </body>
 </html>
