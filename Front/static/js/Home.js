@@ -15,6 +15,11 @@ function searchShops() {
 }
 
 function connectQR() {
-  // Python側のQR機能とAPI通信予定
-  alert("QRコード機能に接続しました（仮）");
+  // QRコード読み取りページに遷移
+  window.location.href = "/qr_road";
+}
+
+function showShopSearch() {
+  // 周辺店舗検索ページに遷移
+  window.location.href = "/shop";
 }

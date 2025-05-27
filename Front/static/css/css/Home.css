@@ -110,3 +110,60 @@ body, html {
   margin-top: 0.5rem;
   font-weight: 600;
 }
+
+.quick-actions {
+  display: flex;
+  justify-content: space-between; /* 均等配置 */
+  align-items: center;
+  margin: 2rem 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.action-button {
+  flex: 1; /* 均等な幅 */
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: #f0f0f0;
+}
+
+.action-button img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+
+.action-button p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.divider {
+  width: 1px;
+  background-color: #ccc; /* 境界線の色 */
+  height: 80%; /* ボタンの高さに合わせる */
+}
+
+@media (max-width: 768px) {
+  .quick-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    border-left: none;
+    border-top: 1px solid #ccc;
+  }
+
+  .action-button:first-child {
+    border-top: none;
+  }
+}
+
