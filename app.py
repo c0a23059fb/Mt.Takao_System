@@ -16,9 +16,14 @@ app = Flask(
 @app.route('/')
 def home():
     return render_template('Home.html')
-@app.route('/qr')
-def qr_page():
+
+@app.route('/qr_road')
+def qr_road():
     return render_template('qr_road.html')
+
+@app.route('/shop')
+def shop():
+    return render_template('shop.html')
 
 @app.route('/scan', methods=['POST'])
 def scan_qr_code():
@@ -40,4 +45,4 @@ def scan_qr_code():
         return jsonify({"success": False, "error": str(e)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, ssl_context=('cert.pem', 'key.pem'))
