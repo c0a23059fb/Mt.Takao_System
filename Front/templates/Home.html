@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>テスト</title>
+  <style>
+    .top-banner {
+      background-color: #e0e0e0;
+      text-align: center;
+      padding: 0.75rem;
+      font-weight: bold;
+      font-size: 1.25rem;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+    .main-visual img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner">
+    <h2>広告募集中！</h2>
+  </div>
+
+  <div class="main-visual">
+    <img src="{{ url_for('static', filename='images/top_image.png') }}" alt="高尾山画像">
+  </div>
+
+  <div class="quick-actions">
+    <div class="action-button">QRコード</div>
+    <div class="action-button">周辺のお店</div>
+  </div>
+  <div class="nav-bar">
+    <!-- ホーム、ルート、QRなどのアイコンボタン -->
+  </div>
+  <div class="search-section">
+    <input type="text" placeholder="店名、種類などで検索">
+  </div>
+  <div class="card-list">
+    <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
+  </div>
+  <div class="horizontal-scroll-gallery">
+    <!-- 小さな径路写真を横スクロール -->
+  </div>
+</body>
+</html>
