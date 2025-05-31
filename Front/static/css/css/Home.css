@@ -151,7 +151,6 @@ body, html {
   background-color: #ccc; /* 境界線の色 */
   height: 80%; /* ボタンの高さに合わせる */
 }
-
 .horizontal-scroll-gallery {
   display: flex;
   overflow-x: auto;

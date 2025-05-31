@@ -15,10 +15,10 @@ app = Flask(
     template_folder='Front/templates'
 )
 
+
 load_dotenv()
 cert_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_cert.pem')  # new_cert.pem の絶対パス
 key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # new_key.pem の絶対パス
-
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(cert_path, key_path)
 
@@ -56,6 +56,7 @@ def scan_qr_code():
         return jsonify({"success": False, "error": str(e)})
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 現在のファイルのディレクトリを取得
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, ssl_context=context)
