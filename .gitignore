@@ -1,0 +1,4 @@
+.env
+keys/
+*.pem
+user_data.db
