@@ -47,11 +47,34 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .card-list {
-      /* 各径路の情報を知る、スタンプの位置を探すなど */
-    }
+
+    /* 小さな径路写真を横スクロール */
     .horizontal-scroll-gallery {
-      /* 小さな径路写真を横スクロール */
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding: 1rem;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-item {
+      flex: 0 0 auto;
+      width: 200px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background-color: #f9f9f9;
+      scroll-snap-align: start;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .scroll-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -79,11 +102,25 @@
   <div class="search-section">
     <input type="text" placeholder="店名、種類などで検索">
   </div>
-  <div class="card-list">
-    <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
-  </div>
+
+  <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
   <div class="horizontal-scroll-gallery">
-    <!-- 小さな径路写真を横スクロール -->
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route1.jpg') }}" alt="ルート1">
+      <p>展望ルート</p>
+    </div>
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route2.jpg') }}" alt="ルート2">
+      <p>自然ルート</p>
+    </div>
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route3.jpg') }}" alt="ルート3">
+      <p>寺院ルート</p>
+    </div>
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route4.jpg') }}" alt="ルート4">
+      <p>歴史ルート</p>
+    </div>
   </div>
 
   <script>
