@@ -124,6 +124,17 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/coupons')
+def coupons():
+    """
+    所有しているクーポンを表示するエンドポイント。
+    Returns:
+        HTMLテンプレート: coupons.html
+    """
+    # 仮のクーポンデータ（データベースから取得する場合はここを変更）
+    coupon_data = []  # 空のリストでクーポンがない状態を表す
+    return render_template('coupons.html', coupons=coupon_data)
+
 if __name__ == '__main__':
     """
     アプリケーションのエントリーポイント。

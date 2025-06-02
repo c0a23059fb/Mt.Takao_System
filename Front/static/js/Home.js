@@ -1,10 +1,3 @@
-// 仮の店舗データ（後にPython連携予定）
-const shops = [
-  { name: "高尾山茶屋", category: "飲食" },
-  { name: "山のカフェ", category: "カフェ" },
-  { name: "みやげ店", category: "お土産" }
-];
-
 function searchShops() {
   const keyword = document.getElementById('searchInput').value;
   const results = shops.filter(shop =>
@@ -22,4 +15,8 @@ function connectQR() {
 function showShopSearch() {
   // 周辺店舗検索ページに遷移
   window.location.href = "/shop";
+}
+
+function navigateToCoupons() {
+  window.location.href = "/coupons"; // クーポン画面に遷移
 }

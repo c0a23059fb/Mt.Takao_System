@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>テスト</title>
+  <title>高尾コネクト</title>
   <style>
     .top-banner {
       background-color: #e0e0e0;
@@ -17,29 +18,35 @@
       align-items: center;
       height: 100px;
     }
+
     .main-visual img {
       width: 100%;
       height: auto;
       display: block;
     }
+
     .quick-actions {
       display: flex;
       justify-content: center;
       margin: 1rem 0;
     }
+
     .action-button {
       text-align: center;
       margin: 0 1rem;
       cursor: pointer;
     }
+
     .action-button img {
       max-width: 100%;
       height: auto;
     }
+
     .search-section {
       text-align: center;
       margin: 1rem 0;
     }
+
     .search-section input {
       width: 80%;
       padding: 0.5rem;
@@ -76,12 +83,14 @@
       height: auto;
       border-radius: 4px;
     }
+
     .home-container {
       display: flex;
       justify-content: center;
       margin: 2rem 0;
       flex-wrap: wrap;
     }
+
     .home-box {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -91,14 +100,17 @@
       background-color: #f9f9f9;
       flex: 0 0 300px;
     }
+
     .home-box h2 {
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
     }
+
     .home-box p {
       font-size: 1rem;
       margin-bottom: 1rem;
     }
+
     .home-box button {
       padding: 0.5rem 1rem;
       font-size: 1rem;
@@ -108,11 +120,13 @@
       color: white;
       cursor: pointer;
     }
+
     .home-box button:hover {
       background-color: #0056b3;
     }
   </style>
 </head>
+
 <body>
   <div class="top-banner">
     <h2>広告募集中！</h2>
@@ -127,34 +141,44 @@
       <img src="{{ url_for('static', filename='images/qr.png') }}" alt="QRコード">
       <p>QRコード</p>
     </div>
-    <div class="divider"></div>
+
+    <!-- 新しいボタン -->
+    <div class="action-button" onclick="navigateToCoupons()">
+      <img src="{{ url_for('static', filename='images/coupon.png') }}" alt="所有クーポン">
+      <p>所有クーポン</p>
+    </div>
+
     <div class="action-button" onclick="navigateToShop()">
       <img src="{{ url_for('static', filename='images/shop.png') }}" alt="周辺検索">
       <p>周辺検索</p>
     </div>
   </div>
 
-  <div class="search-section">
-    <input type="text" placeholder="店名、種類などで検索">
-  </div>
-
   <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
   <div class="horizontal-scroll-gallery">
     <div class="scroll-item">
-      <img src="{{ url_for('static', filename='images/route1.jpg') }}" alt="ルート1">
-      <p>展望ルート</p>
+      <img src="{{ url_for('static', filename='images/route1.jpg') }}" alt="1号路">
+      <p> 表参道コース</p>
     </div>
     <div class="scroll-item">
-      <img src="{{ url_for('static', filename='images/route2.jpg') }}" alt="ルート2">
-      <p>自然ルート</p>
+      <img src="{{ url_for('static', filename='images/route2.jpg') }}" alt="2号路">
+      <p>霞台ループコース</p>
     </div>
     <div class="scroll-item">
-      <img src="{{ url_for('static', filename='images/route3.jpg') }}" alt="ルート3">
-      <p>寺院ルート</p>
+      <img src="{{ url_for('static', filename='images/route3.jpg') }}" alt="3号路">
+      <p>かつら林コース</p>
     </div>
     <div class="scroll-item">
-      <img src="{{ url_for('static', filename='images/route4.jpg') }}" alt="ルート4">
-      <p>歴史ルート</p>
+      <img src="{{ url_for('static', filename='images/route4.jpg') }}" alt="4号路">
+      <p>吊り橋コース</p>
+    </div>
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route5.jpg') }}" alt="5号路">
+      <p>山頂ループコース</p>
+    </div>
+    <div class="scroll-item">
+      <img src="{{ url_for('static', filename='images/route4.jpg') }}" alt="6号路">
+      <p>びわ滝コース</p>
     </div>
   </div>
 
@@ -164,10 +188,16 @@
       window.location.href = "/qr_road";
     }
 
+    function navigateToCoupons() {
+      // クーポンページに遷移
+      window.location.href = "/coupons";
+    }
+
     function navigateToShop() {
       // 周辺店舗検索ページに遷移
       window.location.href = "/shop";
     }
   </script>
 </body>
+
 </html>

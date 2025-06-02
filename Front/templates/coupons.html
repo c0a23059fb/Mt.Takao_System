@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有クーポン</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fdf9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .coupon-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .coupon-item {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9f9f9;
+        }
+
+        .coupon-item h2 {
+            font-size: 1.2rem;
+            color: #66bb6a;
+            margin: 0 0 0.5rem;
+        }
+
+        .coupon-item p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .coupon-item .expiry {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .no-coupons {
+            font-size: 1.2rem;
+            color: #999;
+            margin-top: 2rem;
+        }
+
+        .back-home {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .back-home a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 1rem;
+        }
+
+        .back-home img {
+            vertical-align: middle;
+            margin-right: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="coupon-container">
+        <h1>所有クーポン</h1>
+        {% if coupons %}
+        {% for coupon in coupons %}
+        <div class="coupon-item">
+            <h2>{{ coupon.title }}</h2>
+            <p>{{ coupon.description }}</p>
+            <p class="expiry">有効期限: {{ coupon.expiry }}</p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="no-coupons">クーポンは所有していません。</p>
+        {% endif %}
+    </div>
+
+    <!-- ホーム画面に戻る機能 -->
+    <div class="back-home">
+        <a href="/">
+            <button class="home-button" onclick="navigateToHome()">ホーム画面に戻る</button>
+        </a>
+    </div>
+</body>
+
+</html>

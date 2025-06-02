@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -73,19 +74,13 @@
       color: #555;
     }
 
-    .home-button {
-      margin-top: 2rem;
-      padding: 0.5rem 1rem;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: center;
+    .back-home img {
+      vertical-align: middle;
+      margin-right: 2rem;
     }
   </style>
 </head>
+
 <body>
   <div class="header">周辺店舗検索</div>
 
@@ -98,7 +93,12 @@
     <!-- 検索結果がここに表示されます -->
   </div>
 
-  <button class="home-button" onclick="navigateToHome()">ホーム画面に戻る</button>
+  <!-- ホーム画面に戻る機能 -->
+  <div class="back-home">
+    <a href="/">
+      <button class="home-button" onclick="navigateToHome()">ホーム画面に戻る</button>
+    </a>
+  </div>
 
   <script>
     function searchShops() {
@@ -141,4 +141,5 @@
     }
   </script>
 </body>
+
 </html>
