@@ -51,26 +51,69 @@
     .results {
       width: 90%;
       margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
     }
 
     .result-item {
       background-color: white;
       border: 1px solid #ddd;
-      border-radius: 5px;
+      border-radius: 8px;
       padding: 1rem;
-      margin-bottom: 1rem;
+      width: 320px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: box-shadow 0.2s;
+    }
+
+    .result-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+
+    .result-img-link {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .result-img-link img {
+      width: 90%;
+      max-width: 250px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      transition: transform 0.2s;
+    }
+
+    .result-img-link img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     .result-item h3 {
       margin: 0 0 0.5rem 0;
       font-size: 1.2rem;
+      color: #007bff;
     }
 
     .result-item p {
-      margin: 0;
-      font-size: 0.9rem;
+      margin: 0 0 0.5rem 0;
+      font-size: 0.95rem;
       color: #555;
+      text-align: left;
+      width: 100%;
+    }
+
+    .result-item .shop-link {
+      color: #007bff;
+      text-decoration: underline;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      display: inline-block;
     }
 
     .home-button {
@@ -95,45 +138,70 @@
   </div>
 
   <div class="results" id="results">
-    <!-- 検索結果がここに表示されます -->
+    <!-- 店舗情報がここに表示されます -->
   </div>
 
   <button class="home-button" onclick="navigateToHome()">ホーム画面に戻る</button>
 
   <script>
-    function searchShops() {
-      const query = document.getElementById('searchInput').value.trim();
-      const resultsContainer = document.getElementById('results');
-      resultsContainer.innerHTML = ''; // 結果をクリア
+    // 店舗データ（今後拡張しやすい形）
+    const shopData = [
+      {
+        name: 'すみれ庵',
+        description: '八王子・高尾山口駅近くの「すみれ庵」は、手打ちそばと四季折々の山菜料理が楽しめる老舗そば処です。落ち着いた和の雰囲気の店内で、地元の素材を活かした天ぷらやそばが人気。観光や登山の帰りにもおすすめです。',
+        features: [
+          '手打ちそば・山菜料理',
+          '落ち着いた和の雰囲気',
+          '高尾山口駅から徒歩すぐ'
+        ],
+        image: '/static/images/sumireAN.jpg',
+        url: 'https://www.sumirean.com/'
+      }
+      // 今後ここに店舗を追加
+    ];
 
-      if (!query) {
-        alert('検索キーワードを入力してください。');
+    // 初期表示
+    window.onload = () => {
+      renderShops(shopData);
+    };
+
+    function renderShops(data) {
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+      if (data.length === 0) {
+        resultsContainer.innerHTML = '<p>該当する店舗が見つかりませんでした。</p>';
         return;
       }
+      data.forEach(shop => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <a class="result-img-link" href="${shop.url}" target="_blank" rel="noopener">
+            <img src="${shop.image}" alt="${shop.name}の写真">
+          </a>
+          <h3>${shop.name}</h3>
+          <p>${shop.description}</p>
+          <ul style="padding-left:1.2em; margin:0 0 0.5em 0; color:#444; font-size:0.93rem;">
+            ${shop.features.map(f => `<li>${f}</li>`).join('')}
+          </ul>
+          <a class="shop-link" href="${shop.url}" target="_blank" rel="noopener">公式HPはこちら</a>
+        `;
+        resultsContainer.appendChild(item);
+      });
+    }
 
-      // 仮のデータ（実際にはサーバーから取得する）
-      const mockData = [
-        { name: '高尾山カフェ', description: '高尾山のふもとにあるカフェです。' },
-        { name: '山頂レストラン', description: '高尾山の山頂で絶景を楽しめるレストラン。' },
-        { name: 'お土産屋', description: '高尾山名物のお土産が揃っています。' }
-      ];
-
-      // 検索結果をフィルタリング
-      const filteredResults = mockData.filter(item =>
-        item.name.includes(query) || item.description.includes(query)
-      );
-
-      // 結果を表示
-      if (filteredResults.length > 0) {
-        filteredResults.forEach(item => {
-          const resultItem = document.createElement('div');
-          resultItem.className = 'result-item';
-          resultItem.innerHTML = `<h3>${item.name}</h3><p>${item.description}</p>`;
-          resultsContainer.appendChild(resultItem);
-        });
-      } else {
-        resultsContainer.innerHTML = '<p>該当する店舗が見つかりませんでした。</p>';
+    function searchShops() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) {
+        renderShops(shopData);
+        return;
       }
+      const filtered = shopData.filter(shop =>
+        shop.name.includes(query) ||
+        shop.description.includes(query) ||
+        shop.features.some(f => f.includes(query))
+      );
+      renderShops(filtered);
     }
 
     function navigateToHome() {
