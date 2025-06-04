@@ -8,8 +8,8 @@ import pyzbar.pyzbar as pyzbar
 
 app = Flask(
     __name__,
-    static_folder='shop_web/static',
-    template_folder='shop_web/template'
+    static_folder='static',
+    template_folder='template'
 )
 
 @app.route('/')
