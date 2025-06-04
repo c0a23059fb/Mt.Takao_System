@@ -6,6 +6,8 @@ import cv2
 import numpy as np
 import pyzbar.pyzbar as pyzbar
 import os
+import ssl
+from dotenv import load_dotenv
 import sqlite3
 
 # Flaskアプリケーションの初期化
@@ -14,6 +16,15 @@ app = Flask(
     static_folder='Front/static',  # 静的ファイルのディレクトリ
     template_folder='Front/templates'  # HTMLテンプレートのディレクトリ
 )
+
+# SSL証明書のパスを設定
+load_dotenv()
+cert_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_cert.pem')  # SSL証明書の絶対パス
+key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # SSL秘密鍵の絶対パス
+
+# SSLコンテキストの設定
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.load_cert_chain(cert_path, key_path)
 
 @app.route('/')
 def home():
@@ -129,4 +140,4 @@ if __name__ == '__main__':
     アプリケーションのエントリーポイント。
     FlaskアプリケーションをSSLを使用して起動します。
     """
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, ssl_context=context)
