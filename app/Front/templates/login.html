@@ -76,9 +76,13 @@
 <body>
     <div class="login-container">
         <h1>ログイン</h1>
+
         <form method="POST" action="/login">
             <input type="text" id="userid" name="user_name" placeholder="ユーザー名" required>
             <input type="password" id="password" name="password" placeholder="パスワード" required>
+            {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
             <button type="submit">ログイン</button>
         </form>
     </div>
