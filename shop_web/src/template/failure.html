@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>失敗</title>
+  <style>
+    .popup {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffe6e6;
+      color: #721c24;
+      border: 1px solid #dc3545;
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    .retry-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup">
+    ❌ QRコードの読み取りに失敗しました<br>
+    <button class="retry-button" onclick="window.location.href='index.html'">再試行</button>
+  </div>
+</body>
+</html>
