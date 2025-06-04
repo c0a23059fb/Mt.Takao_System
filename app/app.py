@@ -10,12 +10,15 @@ import ssl
 from dotenv import load_dotenv
 import sqlite3
 
+from modules.DataBase import DataBase
+
 # Flaskアプリケーションの初期化
 app = Flask(
     __name__,
     static_folder='Front/static',  # 静的ファイルのディレクトリ
     template_folder='Front/templates'  # HTMLテンプレートのディレクトリ
 )
+db = DataBase("db")
 
 # SSL証明書のパスを設定
 load_dotenv()
@@ -93,34 +96,23 @@ def login():
         HTMLテンプレート: login_succes.html（成功時）、login.html（GETリクエスト時）
     """
     if request.method == 'POST':
-        email = request.form.get('email')
-        userid = request.form.get('userid')
+        user_name = request.form.get('user_name')
         password = request.form.get('password')
 
-        # デバッグログで値を確認
-        print(f"[ログイン] Email: {email}, ID: {userid}, Password: {password}")
+        print(f"[ログイン試行] user_name: {user_name}, password: {password}")
 
-        # データベースに保存
         try:
-            conn = sqlite3.connect('user_data.db')  # SQLiteデータベースに接続
-            cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    email TEXT NOT NULL,
-                    userid TEXT NOT NULL,
-                    password TEXT NOT NULL
-                )
-            ''')  # テーブルが存在しない場合は作成
-            cursor.execute('INSERT INTO users (email, userid, password) VALUES (?, ?, ?)', (email, userid, password))
-            conn.commit()
-            conn.close()
-            print("データベースに保存しました")
-        except Exception as e:
-            print(f"データベースエラー: {e}")
+            result = db.select_pass(user_name)
 
-        # ユーザー名を表示した後、home画面に遷移
-        return render_template('login_succes.html', userid=userid)
+            if result and result == password:
+                print("ログイン成功")
+                return render_template('login_succes.html', userid=user_name)
+            else:
+                print("ログイン失敗：認証情報が一致しません")
+                return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
+        except Exception as e:
+            print(f"ログイン処理中のエラー: {e}")
+            return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
     return render_template('login.html')
 

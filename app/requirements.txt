@@ -6,3 +6,5 @@ pyzbar
 python-dotenv
 gunicorn
 mysql-connector-python
+pymysql
+cryptography
