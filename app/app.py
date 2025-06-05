@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, session, redirect, url_for, jsonify, render_template
 import base64
 from io import BytesIO
 from PIL import Image
@@ -8,7 +8,10 @@ import pyzbar.pyzbar as pyzbar
 import os
 import ssl
 from dotenv import load_dotenv
-import sqlite3
+from functools import wraps
+
+from modules.DataBase import DataBase
+
 
 # Flaskアプリケーションの初期化
 app = Flask(
@@ -16,6 +19,8 @@ app = Flask(
     static_folder='Front/static',  # 静的ファイルのディレクトリ
     template_folder='Front/templates'  # HTMLテンプレートのディレクトリ
 )
+app.secret_key = app.secret_key = 'secret_key'
+db = DataBase("db")
 
 # SSL証明書のパスを設定
 load_dotenv()
@@ -26,7 +31,17 @@ key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # SS
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(cert_path, key_path)
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))  # ログインページにリダイレクト
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
+@login_required
 def home():
     """
     ホーム画面を表示するエンドポイント。
@@ -36,6 +51,7 @@ def home():
     return render_template('Home.html')
 
 @app.route('/qr_road')
+@login_required
 def qr_road():
     """
     QRコード読み取り画面を表示するエンドポイント。
@@ -45,6 +61,7 @@ def qr_road():
     return render_template('qr_road.html')
 
 @app.route('/shop')
+@login_required
 def shop():
     """
     周辺検索画面を表示するエンドポイント。
@@ -54,6 +71,7 @@ def shop():
     return render_template('shop.html')
 
 @app.route('/scan', methods=['POST'])
+@login_required
 def scan_qr_code():
     """
     QRコードを読み取り、デコードするエンドポイント。
@@ -92,39 +110,33 @@ def login():
     Returns:
         HTMLテンプレート: login_succes.html（成功時）、login.html（GETリクエスト時）
     """
-    if request.method == 'POST':
-        email = request.form.get('email')
-        userid = request.form.get('userid')
-        password = request.form.get('password')
+    if 'user' not in session:
+        if request.method == 'POST':
+            user_name = request.form.get('user_name')
+            password = request.form.get('password')
 
-        # デバッグログで値を確認
-        print(f"[ログイン] Email: {email}, ID: {userid}, Password: {password}")
+            print(f"[ログイン試行] user_name: {user_name}, password: {password}")
 
-        # データベースに保存
-        try:
-            conn = sqlite3.connect('user_data.db')  # SQLiteデータベースに接続
-            cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    email TEXT NOT NULL,
-                    userid TEXT NOT NULL,
-                    password TEXT NOT NULL
-                )
-            ''')  # テーブルが存在しない場合は作成
-            cursor.execute('INSERT INTO users (email, userid, password) VALUES (?, ?, ?)', (email, userid, password))
-            conn.commit()
-            conn.close()
-            print("データベースに保存しました")
-        except Exception as e:
-            print(f"データベースエラー: {e}")
+            try:
+                result = db.select_pass(user_name)
 
-        # ユーザー名を表示した後、home画面に遷移
-        return render_template('login_succes.html', userid=userid)
+                if result and result == password:
+                    session['user'] = user_name
+                    print("ログイン成功")
+                    return render_template('login_succes.html', userid=user_name)
+                else:
+                    print("ログイン失敗：認証情報が一致しません")
+                    return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
+            except Exception as e:
+                print(f"ログイン処理中のエラー: {e}")
+                return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
-    return render_template('login.html')
+        return render_template('login.html')
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/coupons')
+@login_required
 def coupons():
     """
     所有しているクーポンを表示するエンドポイント。
