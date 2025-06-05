@@ -152,6 +152,11 @@
       <img src="{{ url_for('static', filename='images/shop.png') }}" alt="周辺検索">
       <p>周辺検索</p>
     </div>
+    <div class="divider"></div>
+    <div class="action-button" onclick="navigateToCamera()">
+      <img src="{{ url_for('static', filename='images/camera.png') }}" alt="写真撮影">
+      <p>写真</p>
+    </div>
   </div>
 
   <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
@@ -196,6 +201,11 @@
     function navigateToShop() {
       // 周辺店舗検索ページに遷移
       window.location.href = "/shop";
+    }
+
+    function navigateToCamera() {
+      // カメラ機能ページに遷移
+      window.location.href = "/camera";
     }
   </script>
 </body>
