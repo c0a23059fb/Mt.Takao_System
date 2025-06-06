@@ -138,11 +138,10 @@
 
   <div class="quick-actions">
     <div class="action-button" onclick="navigateToQR()">
-      <img src="{{ url_for('static', filename='images/qr.png') }}" alt="QRコード">
+      <img src="{{ url_for('static', filename='images/qr.png') }}" alt="QRコード" style="width:80px; height:80px;">
       <p>QRコード</p>
     </div>
 
-    <!-- 新しいボタン -->
     <div class="action-button" onclick="navigateToCoupons()">
       <img src="{{ url_for('static', filename='images/coupon.png') }}" alt="所有クーポン">
       <p>所有クーポン</p>
@@ -153,10 +152,7 @@
       <p>周辺検索</p>
     </div>
     <div class="divider"></div>
-    <div class="action-button" onclick="navigateToCamera()">
-      <img src="{{ url_for('static', filename='images/camera.png') }}" alt="写真撮影">
-      <p>写真</p>
-    </div>
+    <!-- 写真ボタンは削除済み -->
   </div>
 
   <!-- 各径路の情報を知る、スタンプの位置を探すなど -->
