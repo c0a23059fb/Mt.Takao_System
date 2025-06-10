@@ -83,20 +83,21 @@ def scan_qr_code():
         JSONレスポンス: 成功時はQRコードのデータ、失敗時はエラーメッセージ。
     """
     try:
-        data = request.json['image']
-        print(f"Received data: {data[:100]}")  # デバッグ用ログ（データの先頭100文字を表示）
-        image_data = base64.b64decode(data.split(',')[1])
-        image = Image.open(BytesIO(image_data)).convert('RGB')
-        image_np = np.array(image)
+        data = request.get_json()
+        if 'image' not in data:
+            return "No image provided", 400
+        # Base64のヘッダーを除去して画像を保存
+        img_data = re.sub('^data:image/.+;base64,', '', data['image'])
+        img_binary = base64.b64decode(img_data)
 
-        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
-        decoded_objects = pyzbar.decode(gray)
+        os.makedirs('memorys', exist_ok=True)
+        filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
+        filepath = f'memorys/{filename}'
+        with open(filepath, 'wb') as f:
+            f.write(img_binary)
 
-        if decoded_objects:
-            qr_data = decoded_objects[0].data.decode('utf-8')
-            return jsonify({"success": True, "data": qr_data})
-        else:
-            return jsonify({"success": False, "error": "No QR code detected"})
+        return f"保存成功: {filename}"
+
     except Exception as e:
         print(f"Error: {e}")  # デバッグ用ログ
         return jsonify({"success": False, "error": str(e)})
