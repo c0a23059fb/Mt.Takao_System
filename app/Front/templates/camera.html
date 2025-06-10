@@ -4,115 +4,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>カメラビュー</title>
+  <title>カメラ起動</title>
   <style>
-    .camera-container {
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 1rem;
-    }
-    video, canvas {
-      width: 100%;
-      max-width: 400px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f7f7f7;
     }
 
-    button {
-      margin: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
+    .camera-frame {
+      width: 300px;
+      height: 300px;
+      border: 2px solid #007bff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+      background-color: #eee;
+    }
+
+    #video {
+      width: 300px;
+      height: 300px;
+      background-color: #eee;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .button-group button {
       background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #ff4d4d;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+      text-align: center;
+      line-height: 40px;
       cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-    #result {
-      margin-top: 1rem;
-      color: green;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   </style>
 </head>
 
 <body>
-  <div class="camera-container">
-    <h2>カメラビュー</h2>
-    <video id="camera" autoplay></video>
-    <canvas id="snapshot" style="display:none;"></canvas>
-    <div>
-      <button onclick="takePhoto()">写真を撮る</button>
-      <button onclick="stopCamera()">カメラを停止</button>
+  <button class="close-button" onclick="navigateToHome()">×</button>
+
+  <div class="container">
+    <h1>カメラ起動</h1>
+    <div class="camera-frame">
+      <video id="video" autoplay playsinline></video>
     </div>
-    <div>
-      <button id="sendBtn" onclick="sendPhoto()" style="display:none;">写真を送信</button>
+    <div class="button-group">
+      <button id="camera-toggle" onclick="toggleCamera()">カメラ起動</button>
+      <button id="capture-button" onclick="capturePhoto()">写真を撮る</button>
     </div>
-    <div id="result"></div>
-    <button onclick="window.location.href='/'" style="margin-top:1.5rem; background:#28a745;">戻る</button>
   </div>
 
-  <script>
-    const video = document.getElementById('camera');
-    const canvas = document.getElementById('snapshot');
-    const sendBtn = document.getElementById('sendBtn');
-    const resultDiv = document.getElementById('result');
-    let stream;
-
-    // カメラ起動
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(mediaStream => {
-        stream = mediaStream;
-        video.srcObject = stream;
-      })
-      .catch(error => {
-        console.error('カメラを起動できませんでした:', error);
-      });
-
-    // カメラ停止
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-        alert('カメラを停止しました');
-      }
-    }
-
-    // 写真を撮る
-    function takePhoto() {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'block';
-      sendBtn.style.display = 'inline-block';
-    }
-
-    // 写真を送信
-    function sendPhoto() {
-      const imageData = canvas.toDataURL('image/png');
-      fetch('/upload_photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          resultDiv.textContent = 'クーポンが発行されました！';
-        } else {
-          resultDiv.textContent = '写真が一致しませんでした。';
-        }
-      })
-      .catch(() => {
-        resultDiv.textContent = '送信に失敗しました。';
-      });
-    }
-  </script>
+  <script src="/static/js/qr_scan.js"></script>
 </body>
 
 </html>
