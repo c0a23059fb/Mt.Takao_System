@@ -9,7 +9,8 @@ import os
 import ssl
 from dotenv import load_dotenv
 from functools import wraps
-import sqlite3
+import re
+from datetime import datetime
 
 from modules.DataBase import DataBase
 
@@ -153,25 +154,22 @@ def upload_photo():
     """
     クライアントから送信された写真をデータベースに保存するエンドポイント。
     """
+    data = request.get_json()
+    if 'image' not in data:
+        return "No image provided", 400
     try:
-        data = request.json['image']
-        # Base64データをデコードしてバイナリデータに変換
-        image_data = base64.b64decode(data.split(',')[1])
 
-        # データベースに保存
-        conn = sqlite3.connect('photos.db')
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS photos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                image BLOB NOT NULL
-            )
-        ''')
-        cursor.execute('INSERT INTO photos (image) VALUES (?)', (image_data,))
-        conn.commit()
-        conn.close()
+        # Base64のヘッダーを除去して画像を保存
+        img_data = re.sub('^data:image/.+;base64,', '', data['image'])
+        img_binary = base64.b64decode(img_data)
 
-        return jsonify({"success": True})
+        os.makedirs('memorys', exist_ok=True)
+        filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
+        filepath = f'memorys/{filename}'
+        with open(filepath, 'wb') as f:
+            f.write(img_binary)
+
+        return f"保存成功: {filename}"
     except Exception as e:
         print(f"エラー: {e}")
         return jsonify({"success": False, "error": str(e)})
@@ -181,4 +179,4 @@ if __name__ == '__main__':
     アプリケーションのエントリーポイント。
     FlaskアプリケーションをSSLを使用して起動します。
     """
-    app.run(host='0.0.0.0', port=8080, ssl_context=context)
+    app.run(host='0.0.0.0', port=8000, ssl_context=context)
