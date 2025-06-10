@@ -2,116 +2,217 @@
 <html lang="ja">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>カメラビュー</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>カメラ撮影</title>
   <style>
-    .camera-container {
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 1rem;
-    }
-    video, canvas {
-      width: 100%;
-      max-width: 400px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      justify-content: flex-start;
     }
 
-    button {
-      margin: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      background-color: #007bff;
-      color: white;
+    .camera-header {
+      width: 100vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.2rem 0.5rem 1.2rem;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(17, 17, 17, 0.95) 70%, rgba(17, 17, 17, 0.0) 100%);
+      border-bottom: 1.5px solid #222;
+      backdrop-filter: blur(4px);
+    }
+
+    .camera-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+
+    .close-button {
+      background: #ff4d4d;
+      color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 1.3rem;
+      text-align: center;
+      line-height: 38px;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      transition: background 0.2s;
     }
 
-    button:hover {
-      background-color: #0056b3;
+    .close-button:hover {
+      background: #e60000;
     }
-    #result {
-      margin-top: 1rem;
-      color: green;
+
+    .camera-frame {
+      width: 100vw;
+      max-width: 430px;
+      aspect-ratio: 3/4;
+      height: calc(100vh - 80px - 110px);
+      margin-top: 80px;
+      margin-bottom: 110px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 600px) {
+      .camera-frame {
+        width: 98vw;
+        max-width: 98vw;
+        border-radius: 0;
+      }
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #222;
+    }
+
+    .scan-guide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      border: 2.5px solid #00eaff;
+      border-radius: 24px;
+      box-sizing: border-box;
+      opacity: 0.7;
+    }
+
+    .camera-footer {
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      padding-bottom: 2.5rem;
+      z-index: 10;
+      background: linear-gradient(to top, rgba(17, 17, 17, 0.95) 60%, rgba(17, 17, 17, 0.0) 100%);
+      border-top: 1.5px solid #222;
+      backdrop-filter: blur(4px);
+    }
+
+    .camera-btn {
+      background: #00eaff;
+      border: none;
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      margin: 1.2rem 0 0.5rem 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .camera-btn:active {
+      background: #00b7c7;
+    }
+
+    .camera-btn-inner {
+      width: 44px;
+      height: 44px;
+      background: #fff;
+      border-radius: 50%;
+      border: 2px solid #00eaff;
+    }
+
+    .footer-text {
+      color: #aaa;
+      font-size: 0.95rem;
+      margin-top: 0.2rem;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
-  <div class="camera-container">
-    <h2>カメラビュー</h2>
-    <video id="camera" autoplay></video>
-    <canvas id="snapshot" style="display:none;"></canvas>
-    <div>
-      <button onclick="takePhoto()">写真を撮る</button>
-      <button onclick="stopCamera()">カメラを停止</button>
-    </div>
-    <div>
-      <button id="sendBtn" onclick="sendPhoto()" style="display:none;">写真を送信</button>
-    </div>
-    <div id="result"></div>
-    <button onclick="window.location.href='/'" style="margin-top:1.5rem; background:#28a745;">戻る</button>
+  <div class="camera-header">
+    <span class="camera-title">カメラ撮影</span>
+    <button class="close-button" onclick="window.location.href='/'">×</button>
+  </div>
+
+  <div class="camera-frame">
+    <video id="video" autoplay playsinline></video>
+    <div class="scan-guide"></div>
+  </div>
+
+  <div class="camera-footer">
+    <button class="camera-btn" onclick="capturePhoto()">
+      <div class="camera-btn-inner"></div>
+    </button>
+    <div class="footer-text">撮影ボタンを押してください</div>
   </div>
 
   <script>
-    const video = document.getElementById('camera');
-    const canvas = document.getElementById('snapshot');
-    const sendBtn = document.getElementById('sendBtn');
-    const resultDiv = document.getElementById('result');
-    let stream;
+    const video = document.getElementById('video');
 
-    // カメラ起動
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(mediaStream => {
-        stream = mediaStream;
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: "environment" } },
+          audio: false
+        });
         video.srcObject = stream;
-      })
-      .catch(error => {
-        console.error('カメラを起動できませんでした:', error);
-      });
-
-    // カメラ停止
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-        alert('カメラを停止しました');
+      } catch (error) {
+        alert("カメラにアクセスできません: " + error.message);
       }
     }
 
-    // 写真を撮る
-    function takePhoto() {
+    async function capturePhoto() {
+      const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'block';
-      sendBtn.style.display = 'inline-block';
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imgData = canvas.toDataURL('image/png');
+
+      try {
+        const response = await fetch('/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: imgData })
+        });
+        const text = await response.text();
+        alert(text);
+      } catch (error) {
+        alert('通信エラー: ' + error.message);
+      }
     }
 
-    // 写真を送信
-    function sendPhoto() {
-      const imageData = canvas.toDataURL('image/png');
-      fetch('/upload_photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          resultDiv.textContent = 'クーポンが発行されました！';
-        } else {
-          resultDiv.textContent = '写真が一致しませんでした。';
-        }
-      })
-      .catch(() => {
-        resultDiv.textContent = '送信に失敗しました。';
-      });
-    }
+    window.addEventListener('DOMContentLoaded', startCamera);
   </script>
 </body>
 
