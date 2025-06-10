@@ -5,9 +5,11 @@ services:
       dockerfile: Dockerfile
     image: app
     ports:
-      - "8000:8000"
-    depends_on:
-      - db
+    - mode: ingress
+      target: 8000
+      published: "8888"
+      protocol: tcp
+
 
   db:
     build:

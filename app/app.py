@@ -9,6 +9,7 @@ import os
 import ssl
 from dotenv import load_dotenv
 from functools import wraps
+import sqlite3
 
 from modules.DataBase import DataBase
 
@@ -50,15 +51,15 @@ def home():
     """
     return render_template('Home.html')
 
-@app.route('/qr_road')
+@app.route('/camera')
 @login_required
-def qr_road():
+def camera():
     """
     QRコード読み取り画面を表示するエンドポイント。
     Returns:
-        HTMLテンプレート: qr_road.html
+        HTMLテンプレート: camera.html
     """
-    return render_template('qr_road.html')
+    return render_template('camera.html')
 
 @app.route('/shop')
 @login_required
@@ -147,9 +148,37 @@ def coupons():
     coupon_data = []  # 空のリストでクーポンがない状態を表す
     return render_template('coupons.html', coupons=coupon_data)
 
+@app.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    """
+    クライアントから送信された写真をデータベースに保存するエンドポイント。
+    """
+    try:
+        data = request.json['image']
+        # Base64データをデコードしてバイナリデータに変換
+        image_data = base64.b64decode(data.split(',')[1])
+
+        # データベースに保存
+        conn = sqlite3.connect('photos.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS photos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                image BLOB NOT NULL
+            )
+        ''')
+        cursor.execute('INSERT INTO photos (image) VALUES (?)', (image_data,))
+        conn.commit()
+        conn.close()
+
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"エラー: {e}")
+        return jsonify({"success": False, "error": str(e)})
+
 if __name__ == '__main__':
     """
     アプリケーションのエントリーポイント。
     FlaskアプリケーションをSSLを使用して起動します。
     """
-    app.run(host='0.0.0.0', port=8000, ssl_context=context)
+    app.run(host='0.0.0.0', port=8080, ssl_context=context)
