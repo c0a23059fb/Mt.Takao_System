@@ -9,7 +9,6 @@ import os
 import ssl
 from dotenv import load_dotenv
 from functools import wraps
-import sqlite3
 
 from modules.DataBase import DataBase
 
@@ -181,4 +180,4 @@ if __name__ == '__main__':
     アプリケーションのエントリーポイント。
     FlaskアプリケーションをSSLを使用して起動します。
     """
-    app.run(host='0.0.0.0', port=8080, ssl_context=context)
+    app.run(host='0.0.0.0', port=8000, ssl_context=context)
