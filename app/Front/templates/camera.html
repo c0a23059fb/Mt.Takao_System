@@ -16,7 +16,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
     }
 
     .camera-header {
@@ -85,7 +84,7 @@
       }
     }
 
-    #video {
+    video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -164,8 +163,9 @@
   </div>
 
   <div class="camera-frame">
-    <video id="video" autoplay playsinline></video>
+    <video id="camera" autoplay playsinline></video>
     <div class="scan-guide"></div>
+    <canvas id="snapshot" style="display:none; position:absolute; top:0; left:0;"></canvas>
   </div>
 
   <div class="camera-footer">
@@ -176,7 +176,7 @@
   </div>
 
   <script>
-    const video = document.getElementById('video');
+    const video = document.getElementById('camera');
 
     async function startCamera() {
       try {
@@ -191,7 +191,7 @@
     }
 
     async function capturePhoto() {
-      const canvas = document.createElement('canvas');
+      const canvas = document.getElementById('snapshot');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
@@ -215,5 +215,4 @@
     window.addEventListener('DOMContentLoaded', startCamera);
   </script>
 </body>
-
 </html>
