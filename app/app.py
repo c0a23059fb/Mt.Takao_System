@@ -108,35 +108,44 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 現在のファイル�
 def login():
     """
     ログイン画面を表示し、ユーザー情報をデータベースに保存するエンドポイント。
-    POSTデータとしてメールアドレス、ユーザーID、パスワードを受け取り、SQLiteデータベースに保存します。
+    - GET（通常）：ログイン画面を表示
+    - GET（QRコード経由）：クエリでログイン試行
+    - POST（フォーム送信）：ログイン試行
 
     Returns:
-        HTMLテンプレート: login_succes.html（成功時）、login.html（GETリクエスト時）
+        login_succes.html（成功時）、
+        login.html（エラー時またはGET時）
     """
-    if 'user' not in session:
-        if request.method == 'POST':
-            user_name = request.form.get('user_name')
-            password = request.form.get('password')
-
-            print(f"[ログイン試行] user_name: {user_name}, password: {password}")
-
-            try:
-                result = db.select_pass(user_name)
-
-                if result and result == password:
-                    session['user'] = user_name
-                    print("ログイン成功")
-                    return render_template('login_succes.html', userid=user_name)
-                else:
-                    print("ログイン失敗：認証情報が一致しません")
-                    return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
-            except Exception as e:
-                print(f"ログイン処理中のエラー: {e}")
-                return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
-
-        return render_template('login.html')
-    else:
+    if 'user' in session:
         return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        user_name = request.form.get('user_name')
+        password = request.form.get('password')
+    else:
+        # クエリパラメータから取得（QRコードからの自動ログイン用）
+        user_name = request.args.get('user_name')
+        password = request.args.get('password')
+
+        # クエリが無い通常GETアクセスなら、ログイン画面を表示
+        if not user_name or not password:
+            return render_template('login.html')
+
+    print(f"[ログイン試行] user_name: {user_name}, password: {password}")
+
+    try:
+        result = db.select_pass(user_name)
+
+        if result and result == password:
+            session['user'] = user_name
+            print("ログイン成功")
+            return render_template('login_succes.html', userid=user_name)
+        else:
+            print("ログイン失敗：認証情報が一致しません")
+            return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
+    except Exception as e:
+        print(f"ログイン処理中のエラー: {e}")
+        return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
 @app.route('/coupons')
 @login_required
