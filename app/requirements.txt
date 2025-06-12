@@ -1,3 +1,10 @@
-fastapi
-uvicorn
+Flask
+Pillow
+opencv-python
+numpy
+pyzbar
+python-dotenv
+gunicorn
 mysql-connector-python
+pymysql
+cryptography

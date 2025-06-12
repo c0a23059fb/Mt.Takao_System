@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <style>
+        /* 全体のスタイル */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            /* 白に近い背景色 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* ログインフォームのコンテナ */
+        .login-container {
+            background-color: #d4f8d4;
+            /* 明るい黄緑色 */
+            border-radius: 15px;
+            /* 丸みを帯びたデザイン */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 軽い影を追加 */
+            padding: 2rem;
+            width: 300px;
+            text-align: center;
+        }
+
+        /* フォームタイトル */
+        .login-container h1 {
+            color: #4caf50;
+            /* 黄緑色の濃いトーン */
+            margin-bottom: 1rem;
+        }
+
+        /* 入力フィールド */
+        .login-container input {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #c8e6c9;
+            /* 黄緑色の薄いトーン */
+            border-radius: 10px;
+            /* 丸みを帯びたデザイン */
+            box-sizing: border-box;
+        }
+
+        /* ログインボタン */
+        .login-container button {
+            background-color: #4caf50;
+            /* 黄緑色の濃いトーン */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            /* 丸みを帯びたデザイン */
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* ボタンのホバー効果 */
+        .login-container button:hover {
+            background-color: #43a047;
+            /* 少し濃い黄緑色 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1>ログイン</h1>
+
+        <form method="POST" action="/login">
+            <input type="text" id="userid" name="user_name" placeholder="ユーザー名" required>
+            <input type="password" id="password" name="password" placeholder="パスワード" required>
+            {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
+            <button type="submit">ログイン</button>
+        </form>
+    </div>
+</body>
+
+</html>

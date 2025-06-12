@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ようこそ</title>
+    <script>
+        // 3秒後にhome画面に遷移
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 3000);
+    </script>
+</head>
+
+<body>
+    <h1>ようこそ、{{ userid }}さん！</h1>
+    <p>数秒後にホーム画面に遷移します...</p>
+</body>
+
+</html>
