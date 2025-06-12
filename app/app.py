@@ -175,6 +175,11 @@ def upload_photo():
         print(f"エラー: {e}")
         return jsonify({"success": False, "error": str(e)})
 
+@app.route('/checkpoint')
+@login_required
+def viw_points():
+    return render_template("checkpoint.html")
+
 if __name__ == '__main__':
     """
     アプリケーションのエントリーポイント。
