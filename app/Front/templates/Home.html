@@ -138,8 +138,8 @@
 
   <div class="quick-actions">
     <div class="action-button" onclick="navigateToQR()">
-      <img src="{{ url_for('static', filename='images/qr.png') }}" alt="QRコード" style="width:80px; height:80px;">
-      <p>QRコード</p>
+      <img src="{{ url_for('static', filename='images/camera.png') }}" alt="カメラ" style="width:80px; height:80px;">
+      <p>カメラ</p>
     </div>
 
     <div class="action-button" onclick="navigateToCoupons()">
@@ -181,6 +181,13 @@
       <img src="{{ url_for('static', filename='images/route4.jpg') }}" alt="6号路">
       <p>びわ滝コース</p>
     </div>
+  </div>
+
+  <!-- お題写真ページへのリンクを追加 -->
+  <div class="home-box" style="margin: 2rem auto; max-width: 400px;">
+    <h2>チェックポイントのお題写真</h2>
+    <p>各チェックポイントのお題写真はこちらから確認できます。</p>
+    <button onclick="window.location.href='/checkpoint'">お題写真ページへ</button>
   </div>
 
   <script>

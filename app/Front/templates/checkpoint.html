@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>チェックポイントお題写真</title>
+  <style>
+    body {
+      background: #f7fafd;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    .checkpoint-gallery {
+      margin: 2.5rem auto 2rem auto;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      text-align: center;
+    }
+    .checkpoint-gallery h2 {
+      color: #007bff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.04em;
+    }
+    .checkpoint-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .checkpoint-item {
+      background: linear-gradient(135deg, #f0f4fa 70%, #eaf6ff 100%);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 1rem 1rem 0.7rem 1rem;
+      width: 170px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: box-shadow 0.2s;
+    }
+    .checkpoint-item:hover {
+      box-shadow: 0 6px 18px rgba(0,0,0,0.13);
+    }
+    .checkpoint-item img {
+      width: 100%;
+      max-width: 140px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.7rem;
+      border: 2px solid #e0e7ef;
+      background: #fff;
+    }
+    .checkpoint-item p {
+      color: #333;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.03em;
+    }
+    .home-btn {
+      margin-top: 1.5rem;
+      padding: 0.7rem 2.2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #007bff 60%, #00eaff 100%);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      transition: background 0.2s;
+    }
+    .home-btn:hover {
+      background: linear-gradient(90deg, #0056b3 60%, #00b7c7 100%);
+    }
+    @media (max-width: 700px) {
+      .checkpoint-list {
+        gap: 1rem;
+      }
+      .checkpoint-item {
+        width: 44vw;
+        min-width: 120px;
+        max-width: 180px;
+        padding: 0.7rem 0.5rem 0.5rem 0.5rem;
+      }
+      .checkpoint-item img {
+        max-width: 100px;
+        height: 80px;
+      }
+    }
+    @media (max-width: 500px) {
+      .checkpoint-gallery {
+        padding: 1.2rem 0.3rem 1rem 0.3rem;
+      }
+      .checkpoint-list {
+        gap: 0.5rem;
+      }
+      .checkpoint-item {
+        width: 44vw;
+        min-width: 90px;
+        max-width: 120px;
+        padding: 0.5rem 0.2rem 0.3rem 0.2rem;
+      }
+      .checkpoint-item img {
+        max-width: 70px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="checkpoint-gallery">
+    <h2>チェックポイントのお題写真</h2>
+    <div class="checkpoint-list">
+      <div class="checkpoint-item">
+        <img src="{{ url_for('static', filename='images/check01.jpg') }}" alt="チェックポイント1">
+        <p>チェックポイント1</p>
+      </div>
+      <div class="checkpoint-item">
+        <img src="{{ url_for('static', filename='images/check02.jpg') }}" alt="チェックポイント2">
+        <p>チェックポイント2</p>
+      </div>
+      <div class="checkpoint-item">
+        <img src="{{ url_for('static', filename='images/check03.jpg') }}" alt="チェックポイント3">
+        <p>チェックポイント3</p>
+      </div>
+      <div class="checkpoint-item">
+        <img src="{{ url_for('static', filename='images/goal.jpg') }}" alt="ゴール">
+        <p>ゴール</p>
+      </div>
+    </div>
+    <button class="home-btn" onclick="window.location.href='/'">ホームに戻る</button>
+  </div>
+</body>
+</html>
