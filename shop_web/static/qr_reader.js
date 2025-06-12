@@ -1,22 +1,44 @@
-let stream = null; // カメラストリームを保持
-let qrScanInterval = null; // QRコードスキャン用のタイマー
+let stream = null;
+let qrScanInterval = null;
 
 async function startCamera() {
   try {
     const video = document.getElementById('video');
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { exact: "environment" } // 外カメラを指定
-      }
+      video: { facingMode: "environment" }
     });
     video.srcObject = stream;
 
-    // QRコードスキャンを開始
-    startQRScan();
+    video.onloadedmetadata = () => {
+      video.play();
+      startQRScan();
+    };
   } catch (error) {
     console.error('カメラを起動できませんでした:', error);
     alert(`カメラを起動できませんでした。エラー内容: ${error.message}`);
   }
+}
+
+function startQRScan() {
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  qrScanInterval = setInterval(() => {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+      if (code) {
+        alert(`QRコードを読み取りました: ${code.data}`);
+        stopCamera();
+      }
+    }
+  }, 500);
 }
 
 function stopCamera() {
@@ -41,26 +63,6 @@ function toggleCamera() {
     startCamera();
     button.textContent = "カメラ停止";
   }
-}
-
-function startQRScan() {
-  const video = document.getElementById('video');
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-
-  qrScanInterval = setInterval(() => {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-    if (code) {
-      alert(`QRコードを読み取りました: ${code.data}`);
-      stopCamera(); // QRコードを読み取ったらカメラを停止
-    }
-  }, 500); // 500msごとにスキャン
 }
 
 function stopQRScan() {

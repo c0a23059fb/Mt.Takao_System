@@ -28,11 +28,13 @@
       background-color: #eee;
     }
 
-    #video {
-      width: 300px;
-      height: 300px;
-      background-color: #eee;
-    }
+          #video {
+        width: 300px;           /* 枠線と同じ幅 */
+        height: 300px;          /* 枠線と同じ高さ */
+        object-fit: cover;      /* アスペクト比を維持しつつ、はみ出した部分は切り取り */
+        border-radius: 8px;     /* 枠線に合わせて角丸 */
+        background-color: #000; /* 映像が映らない時の背景 */
+      }
 
     .button-group {
       display: flex;
@@ -81,6 +83,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
   <script src="{{ url_for('static', filename='qr_reader.js') }}"></script>
 </body>
 </html>
