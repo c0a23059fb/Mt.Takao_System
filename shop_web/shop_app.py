@@ -60,16 +60,14 @@ def scan():
                 cursor.execute(sql, (qr_data,))
                 row = cursor.fetchone()
                 if row is None:
-                    # クーポンコードがDBに存在しない場合
                     conn.close()
                     return jsonify({"success": False, "error": "無効なクーポンです", "redirect": "/failure"})
-                elif row['coupon_valid'] == 'FALSE':
-                    # すでに使用済みの場合
+                elif not row['coupon_valid']:  # coupon_valid が False (=0)なら使用済み
                     conn.close()
                     return jsonify({"success": False, "error": "使用済みクーポンです", "redirect": "/used"})
                 else:
                     # 初回利用なので使用済みに更新
-                    update_sql = "UPDATE Users SET coupon_valid='FALSE' WHERE coupon_code=%s"
+                    update_sql = "UPDATE Users SET coupon_valid=FALSE WHERE coupon_code=%s"
                     cursor.execute(update_sql, (qr_data,))
                     conn.commit()
             conn.close()
