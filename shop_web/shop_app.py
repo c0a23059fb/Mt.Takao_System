@@ -19,7 +19,7 @@ app = Flask(
 def get_db_connection():
     # 必要に応じてhost, user, password, databaseを変更
     return pymysql.connect(
-        host='localhost',
+        host='db',
         user='root',
         password='passwordA1!',
         database='main_db',
@@ -64,6 +64,7 @@ def scan():
                     return jsonify({"success": False, "error": "無効なクーポンです", "redirect": "/failure"})
                 elif not row['coupon_valid']:  # coupon_valid が False (=0)なら使用済み
                     conn.close()
+                    print("使用済みクーポン:", qr_data)
                     return jsonify({"success": False, "error": "使用済みクーポンです", "redirect": "/used"})
                 else:
                     # 初回利用なので使用済みに更新
@@ -72,12 +73,15 @@ def scan():
                     conn.commit()
             conn.close()
             # QRコードの内容（文字列）はqr_dataで取得できる。必要ならログや別テーブルに保存可能
+            print("QRコードデータ:", qr_data)
             return jsonify({"success": True, "data": qr_data, "redirect": "/success"})
         else:
             # QRコードが検出できなかった場合
+            print("No QR code detected")
             return jsonify({"success": False, "error": "QRコードが検出できませんでした", "redirect": "/failure"})
     except Exception as e:
         # 例外発生時
+        print("Exception during scan:", str(e))
         return jsonify({"success": False, "error": str(e), "redirect": "/failure"})
 
 # QRコード読み取り成功画面
