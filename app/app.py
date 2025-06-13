@@ -162,13 +162,12 @@ def coupons():
 @app.route('/upload_photo', methods=['POST'])
 def upload_photo():
     """
-    クライアントから送信された写真をデータベースに保存するエンドポイント。
+    クライアントから送信された写真をデータベースに保存し、認証結果を返すエンドポイント。
     """
     data = request.get_json()
     if 'image' not in data:
-        return "No image provided", 400
+        return jsonify({"success": False, "error": "No image provided"})
     try:
-
         # Base64のヘッダーを除去して画像を保存
         img_data = re.sub('^data:image/.+;base64,', '', data['image'])
         img_binary = base64.b64decode(img_data)
@@ -179,9 +178,10 @@ def upload_photo():
         with open(filepath, 'wb') as f:
             f.write(img_binary)
 
-        return f"保存成功: {filename}"
+        # ここで認証処理を行い、成功なら success: True, 失敗なら success: False を返す
+        result = authenticate_image_function(...)  # ←認証処理
+        return jsonify({"success": result})
     except Exception as e:
-        print(f"エラー: {e}")
         return jsonify({"success": False, "error": str(e)})
 
 @app.route('/checkpoint')
