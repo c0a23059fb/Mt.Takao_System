@@ -153,6 +153,50 @@
       margin-top: 0.2rem;
       text-align: center;
     }
+
+    /* モーダルスタイル */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+    }
+
+    .modal-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    .modal-content {
+      position: relative;
+      padding: 2rem;
+      background: rgba(17, 17, 17, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    #result-btn {
+      margin-top: 24px;
+      padding: 10px 32px;
+      background: #00eaff;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -175,6 +219,16 @@
     <div class="footer-text">撮影ボタンを押してください</div>
   </div>
 
+  <!-- 検証中モーダル -->
+  <div id="loading-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; color:#fff; font-size:1.5em;">
+    <div>検証中です。しばらくお待ちください...</div>
+  </div>
+  <!-- 結果モーダル -->
+  <div id="result-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; flex-direction:column; color:#fff; text-align:center;">
+    <div id="result-message"></div>
+    <button id="result-btn" style="margin-top:24px; padding:10px 32px; background:#00eaff; color:#111; border:none; border-radius:6px; font-size:1em; cursor:pointer;">OK</button>
+  </div>
+
   <script>
     const video = document.getElementById('camera');
 
@@ -190,6 +244,28 @@
       }
     }
 
+    function showLoading() {
+      document.getElementById('loading-modal').style.display = 'flex';
+    }
+    function hideLoading() {
+      document.getElementById('loading-modal').style.display = 'none';
+    }
+    function showResult(success) {
+      const modal = document.getElementById('result-modal');
+      const msg = document.getElementById('result-message');
+      const btn = document.getElementById('result-btn');
+      modal.style.display = 'flex';
+      if (success) {
+        msg.textContent = "認証成功！ホーム画面に戻ります";
+        btn.textContent = "ホームへ";
+        btn.onclick = () => { window.location.href = "/"; };
+      } else {
+        msg.textContent = "認証失敗。もう一度撮影してください";
+        btn.textContent = "カメラに戻る";
+        btn.onclick = () => { modal.style.display = 'none'; };
+      }
+    }
+
     async function capturePhoto() {
       const canvas = document.getElementById('snapshot');
       canvas.width = video.videoWidth;
@@ -199,15 +275,19 @@
 
       const imgData = canvas.toDataURL('image/png');
 
+      showLoading(); // 検証中モーダル表示
+
       try {
         const response = await fetch('/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: imgData })
         });
-        const text = await response.text();
-        alert(text);
+        const result = await response.json();
+        hideLoading();
+        showResult(result.success);
       } catch (error) {
+        hideLoading();
         alert('通信エラー: ' + error.message);
       }
     }
