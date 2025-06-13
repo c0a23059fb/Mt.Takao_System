@@ -76,15 +76,10 @@
     <div class="coupon-container">
         <h1>所有クーポン</h1>
         {% if coupons %}
-        {% for coupon in coupons %}
-        <div class="coupon-item">
-            <h2>{{ coupon.title }}</h2>
-            <p>{{ coupon.description }}</p>
-            <p class="expiry">有効期限: {{ coupon.expiry }}</p>
-        </div>
-        {% endfor %}
+            <img src="{{ url_for('static', filename='images/coupon15.webp') }}" alt="coupon画像" width="200">
+            <img src="{{ url_for('static', filename='images/coupon_qr/' ~ filename) }}" alt="QR画像" width="200">
         {% else %}
-        <p class="no-coupons">クーポンは所有していません。</p>
+            <p class="no-coupons">クーポンは所有していません。</p>
         {% endif %}
     </div>
 

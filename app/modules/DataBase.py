@@ -25,3 +25,27 @@ class DataBase():
             return result[0][0]
         else:
             return
+
+    def select_id(self, user_name):
+        query = "SELECT id FROM Users WHERE user_name = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (user_name,))
+        result = cursor.fetchall()
+        db.close()
+        if result:
+            return result[0][0]
+        else:
+            return
+
+    def checkAgoal(self, user_name):
+        id = self.select_id(user_name)
+        query = "SELECT check_valid, goal_valid FROM Check_Point WHERE user_id = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (id,))
+        result = cursor.fetchall()[0]
+        db.close()
+        if result == (1, 1):
+            return True
+        return False

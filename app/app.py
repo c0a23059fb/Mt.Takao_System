@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from functools import wraps
 import re
 from datetime import datetime
+import hashlib
 # import redis
 
 from modules.DataBase import DataBase
@@ -35,6 +36,8 @@ key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # SS
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(cert_path, key_path)
 
+def hash_md5(text: str) -> str:
+    return hashlib.md5(text.encode('utf-8')).hexdigest()
 
 def login_required(f):
     @wraps(f)
@@ -158,9 +161,9 @@ def coupons():
     Returns:
         HTMLテンプレート: coupons.html
     """
-    # 仮のクーポンデータ（データベースから取得する場合はここを変更）
-    coupon_data = []  # 空のリストでクーポンがない状態を表す
-    return render_template('coupons.html', coupons=coupon_data)
+    user_name = hash_md5(session['user'])
+    coupon_data = db.checkAgoal(session['user'])
+    return render_template('coupons.html',filename = f"{user_name}.png", coupons=coupon_data)
 
 @app.route('/upload_photo', methods=['POST'])
 def upload_photo():
