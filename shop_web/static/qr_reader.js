@@ -39,14 +39,31 @@ function startQRScan() {
       const code = jsQR(imageData.data, canvas.width, canvas.height);
 
       if (code) {
-        console.log("QRコード文字列:", code.data);
-        sendQRData(code.data);
+        console.log("読み取ったQRコード文字列:", code.data);
+        sendQRDataToFlask(code.data);
         stopCamera();
       }
     }
   }, 500);
 }
 
+function sendQRDataToFlask(qrText) {
+  fetch("/scan", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ code: qrText })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("サーバーからの応答:", data);
+  })
+  .catch(error => {
+    console.error("サーバー通信エラー:", error);
+    alert("QRコードの送信に失敗しました");
+  });
+}
 
 function stopCamera() {
   if (stream) {
@@ -75,33 +92,4 @@ function toggleCamera() {
   }
 }
 
-function navigateToHome() {
-  stopCamera();
-  window.location.href = "/";
-}
-
-// 🔽 QRコードをFlaskに送信して画面遷移を処理
-function sendQRData(qrText) {
-  fetch("/scan", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ code: qrText })  // QRの内容を送信
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.redirect) {
-        window.location.href = data.redirect;  // 成功・失敗に応じて遷移
-      } else {
-        alert("予期せぬ応答です");
-      }
-    })
-    .catch(error => {
-      console.error("通信エラー:", error);
-      alert("QRコードの送信に失敗しました");
-    });
-}
-
-// ページ離脱時にカメラを停止
 window.addEventListener('pagehide', stopCamera);
