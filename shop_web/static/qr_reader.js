@@ -39,36 +39,9 @@ function startQRScan() {
       const code = jsQR(imageData.data, canvas.width, canvas.height);
 
       if (code) {
-        const code = jsQR(imageData.data, canvas.width, canvas.height);
-        if (code) {
-          console.log("QRコード文字列:", code.data);
-          // 文字列だけサーバーに送る方法に切り替え可能
-          sendQRData(code.data);
-          stopCamera();
-        }
-        stopCamera(); // カメラ停止
-
-        // canvas → base64
-        const base64Image = canvas.toDataURL("image/png");
-
-        // サーバーにPOST送信
-        fetch("/scan", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64Image })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.redirect) {
-            window.location.href = data.redirect; // 成功・失敗に応じて遷移
-          } else {
-            alert("予期しないエラーです: " + (data.error || "不明"));
-          }
-        })
-        .catch(err => {
-          console.error("通信エラー:", err);
-          alert("サーバーとの通信に失敗しました");
-        });
+        console.log("QRコード文字列:", code.data);
+        sendQRData(code.data);
+        stopCamera();
       }
     }
   }, 500);
