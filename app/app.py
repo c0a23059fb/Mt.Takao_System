@@ -163,7 +163,8 @@ def coupons():
     """
     user_name = hash_md5(session['user'])
     coupon_data = db.checkAgoal(session['user'])
-    return render_template('coupons.html',filename = f"{user_name}.png", coupons=coupon_data)
+    valid = db.select_coupon_valid(session['user'])
+    return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
 
 @app.route('/upload_photo', methods=['POST'])
 def upload_photo():

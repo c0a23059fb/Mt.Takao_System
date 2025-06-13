@@ -38,6 +38,15 @@ class DataBase():
         else:
             return
 
+    def select_coupon_valid(self, user_name):
+        query = "SELECT coupon_valid FROM Users WHERE user_name = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (user_name,))
+        result = cursor.fetchall()[0]
+        db.close()
+        return result[0]
+
     def checkAgoal(self, user_name):
         id = self.select_id(user_name)
         query = "SELECT check_valid, goal_valid FROM Check_Point WHERE user_id = %s"

@@ -75,7 +75,7 @@
 <body>
     <div class="coupon-container">
         <h1>所有クーポン</h1>
-        {% if coupons %}
+        {% if coupons and resource%}
             <img src="{{ url_for('static', filename='images/coupon15.webp') }}" alt="coupon画像" width="200">
             <img src="{{ url_for('static', filename='images/coupon_qr/' ~ filename) }}" alt="QR画像" width="200">
         {% else %}
