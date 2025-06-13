@@ -9,6 +9,8 @@ import os
 import ssl
 from dotenv import load_dotenv
 from functools import wraps
+import re
+from datetime import datetime
 
 from modules.DataBase import DataBase
 
@@ -50,15 +52,15 @@ def home():
     """
     return render_template('Home.html')
 
-@app.route('/qr_road')
+@app.route('/camera')
 @login_required
-def qr_road():
+def camera():
     """
     QRコード読み取り画面を表示するエンドポイント。
     Returns:
-        HTMLテンプレート: qr_road.html
+        HTMLテンプレート: camera.html
     """
-    return render_template('qr_road.html')
+    return render_template('camera.html')
 
 @app.route('/shop')
 @login_required
@@ -81,20 +83,21 @@ def scan_qr_code():
         JSONレスポンス: 成功時はQRコードのデータ、失敗時はエラーメッセージ。
     """
     try:
-        data = request.json['image']
-        print(f"Received data: {data[:100]}")  # デバッグ用ログ（データの先頭100文字を表示）
-        image_data = base64.b64decode(data.split(',')[1])
-        image = Image.open(BytesIO(image_data)).convert('RGB')
-        image_np = np.array(image)
+        data = request.get_json()
+        if 'image' not in data:
+            return "No image provided", 400
+        # Base64のヘッダーを除去して画像を保存
+        img_data = re.sub('^data:image/.+;base64,', '', data['image'])
+        img_binary = base64.b64decode(img_data)
 
-        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
-        decoded_objects = pyzbar.decode(gray)
+        os.makedirs('memorys', exist_ok=True)
+        filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
+        filepath = f'memorys/{filename}'
+        with open(filepath, 'wb') as f:
+            f.write(img_binary)
 
-        if decoded_objects:
-            qr_data = decoded_objects[0].data.decode('utf-8')
-            return jsonify({"success": True, "data": qr_data})
-        else:
-            return jsonify({"success": False, "error": "No QR code detected"})
+        return f"保存成功: {filename}"
+
     except Exception as e:
         print(f"Error: {e}")  # デバッグ用ログ
         return jsonify({"success": False, "error": str(e)})
@@ -146,6 +149,36 @@ def coupons():
     # 仮のクーポンデータ（データベースから取得する場合はここを変更）
     coupon_data = []  # 空のリストでクーポンがない状態を表す
     return render_template('coupons.html', coupons=coupon_data)
+
+@app.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    """
+    クライアントから送信された写真をデータベースに保存するエンドポイント。
+    """
+    data = request.get_json()
+    if 'image' not in data:
+        return "No image provided", 400
+    try:
+
+        # Base64のヘッダーを除去して画像を保存
+        img_data = re.sub('^data:image/.+;base64,', '', data['image'])
+        img_binary = base64.b64decode(img_data)
+
+        os.makedirs('memorys', exist_ok=True)
+        filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
+        filepath = f'memorys/{filename}'
+        with open(filepath, 'wb') as f:
+            f.write(img_binary)
+
+        return f"保存成功: {filename}"
+    except Exception as e:
+        print(f"エラー: {e}")
+        return jsonify({"success": False, "error": str(e)})
+
+@app.route('/checkpoint')
+@login_required
+def viw_points():
+    return render_template("checkpoint.html")
 
 if __name__ == '__main__':
     """

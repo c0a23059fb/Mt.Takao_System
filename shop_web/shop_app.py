@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, jsonify
+import pymysql
 import base64
 from io import BytesIO
 from PIL import Image
@@ -11,6 +12,17 @@ app = Flask(
     static_folder='static',
     template_folder='template'
 )
+
+# DB接続情報（本番用に適宜修正）
+def get_db_connection():
+    return pymysql.connect(
+        host='localhost',
+        user='root',
+        password='passwordA1!',
+        database='main_db',
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 @app.route('/')
 def index():
@@ -33,7 +45,17 @@ def scan():
         decoded_objects = pyzbar.decode(gray)
         if decoded_objects:
             qr_data = decoded_objects[0].data.decode('utf-8')
-            return jsonify({"success": True, "data": qr_data})
+            # DBでクーポン認証
+            conn = get_db_connection()
+            with conn.cursor() as cursor:
+                sql = "SELECT * FROM Users WHERE coupon_code=%s AND coupon_valid='TRUE'"
+                cursor.execute(sql, (qr_data,))
+                user = cursor.fetchone()
+            conn.close()
+            if user:
+                return jsonify({"success": True, "data": qr_data})
+            else:
+                return jsonify({"success": False, "error": "無効なクーポンです"})
         else:
             return jsonify({"success": False, "error": "QRコードが検出できませんでした"})
     except Exception as e:
