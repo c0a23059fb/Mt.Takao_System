@@ -38,31 +38,46 @@ def index():
 # QRコード画像を受け取り、デコード・DB判定・状態更新
 @app.route('/scan', methods=['POST'])
 def scan():
+    """
+    QRコード画像を受け取り、デコードして結果を返す
+    - 初回読み込み時はDBのcoupon_validをFALSEに更新（使用済みにする）
+    - 2回目以降は「使用済み」と判定
+    """
     try:
-        data = request.get_json()
-        qr_data = data.get('code')  # 文字列で受け取る
-
-        if not qr_data:
-            return jsonify({"success": False, "error": "QRコードデータがありません", "redirect": "/failure"})
-
-        conn = get_db_connection()
-        with conn.cursor() as cursor:
-            sql = "SELECT coupon_valid FROM Users WHERE coupon_code=%s"
-            cursor.execute(sql, (qr_data,))
-            row = cursor.fetchone()
-            if row is None:
-                conn.close()
-                return jsonify({"success": False, "error": "無効なクーポンです", "redirect": "/failure"})
-            elif not row['coupon_valid']:
-                conn.close()
-                return jsonify({"success": False, "error": "使用済みクーポンです", "redirect": "/used"})
-            else:
-                update_sql = "UPDATE Users SET coupon_valid=FALSE WHERE coupon_code=%s"
-                cursor.execute(update_sql, (qr_data,))
-                conn.commit()
-        conn.close()
-        return jsonify({"success": True, "data": qr_data, "redirect": "/success"})
+        # 画像データを受け取りデコード
+        data = request.json['image']
+        image_data = base64.b64decode(data.split(',')[1])
+        image = Image.open(BytesIO(image_data)).convert('RGB')
+        image_np = np.array(image)
+        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+        decoded_objects = pyzbar.decode(gray)
+        if decoded_objects:
+            qr_data = decoded_objects[0].data.decode('utf-8')  # QRコードの内容（文字列）
+            # DBでクーポン状態を確認・更新
+            conn = get_db_connection()
+            with conn.cursor() as cursor:
+                sql = "SELECT coupon_valid FROM Users WHERE coupon_code=%s"
+                cursor.execute(sql, (qr_data,))
+                row = cursor.fetchone()
+                if row is None:
+                    conn.close()
+                    return jsonify({"success": False, "error": "無効なクーポンです", "redirect": "/failure"})
+                elif not row['coupon_valid']:  # coupon_valid が False (=0)なら使用済み
+                    conn.close()
+                    return jsonify({"success": False, "error": "使用済みクーポンです", "redirect": "/used"})
+                else:
+                    # 初回利用なので使用済みに更新
+                    update_sql = "UPDATE Users SET coupon_valid=FALSE WHERE coupon_code=%s"
+                    cursor.execute(update_sql, (qr_data,))
+                    conn.commit()
+            conn.close()
+            # QRコードの内容（文字列）はqr_dataで取得できる。必要ならログや別テーブルに保存可能
+            return jsonify({"success": True, "data": qr_data, "redirect": "/success"})
+        else:
+            # QRコードが検出できなかった場合
+            return jsonify({"success": False, "error": "QRコードが検出できませんでした", "redirect": "/failure"})
     except Exception as e:
+        # 例外発生時
         return jsonify({"success": False, "error": str(e), "redirect": "/failure"})
 
 # QRコード読み取り成功画面
