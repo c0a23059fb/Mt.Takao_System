@@ -39,6 +39,13 @@ function startQRScan() {
       const code = jsQR(imageData.data, canvas.width, canvas.height);
 
       if (code) {
+        const code = jsQR(imageData.data, canvas.width, canvas.height);
+        if (code) {
+          console.log("QRコード文字列:", code.data);
+          // 文字列だけサーバーに送る方法に切り替え可能
+          sendQRData(code.data);
+          stopCamera();
+        }
         stopCamera(); // カメラ停止
 
         // canvas → base64
