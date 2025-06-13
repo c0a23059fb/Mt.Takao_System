@@ -1,35 +1,87 @@
-let stream = null; // カメラストリームを保持
-let qrScanInterval = null; // QRコードスキャン用のタイマー
+window.onload = () => {
+  const button = document.getElementById('camera-toggle');
+  button.textContent = "カメラ起動";
+};
+
+let stream = null;
+let qrScanInterval = null;
 
 async function startCamera() {
   try {
     const video = document.getElementById('video');
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { exact: "environment" } // 外カメラを指定
-      }
+      video: { facingMode: "environment" }
     });
     video.srcObject = stream;
 
-    // QRコードスキャンを開始
-    startQRScan();
+    video.onloadedmetadata = () => {
+      video.play();
+      startQRScan();
+    };
   } catch (error) {
     console.error('カメラを起動できませんでした:', error);
     alert(`カメラを起動できませんでした。エラー内容: ${error.message}`);
   }
 }
 
+function startQRScan() {
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  qrScanInterval = setInterval(() => {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+      if (code) {
+        stopCamera(); // カメラ停止
+
+        // canvas → base64
+        const base64Image = canvas.toDataURL("image/png");
+
+        // サーバーにPOST送信
+        fetch("/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64Image })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.redirect) {
+            window.location.href = data.redirect; // 成功・失敗に応じて遷移
+          } else {
+            alert("予期しないエラーです: " + (data.error || "不明"));
+          }
+        })
+        .catch(err => {
+          console.error("通信エラー:", err);
+          alert("サーバーとの通信に失敗しました");
+        });
+      }
+    }
+  }, 500);
+}
+
+
 function stopCamera() {
   if (stream) {
-    const tracks = stream.getTracks();
-    tracks.forEach(track => track.stop()); // カメラを停止
+    stream.getTracks().forEach(track => track.stop());
     stream = null;
-    const video = document.getElementById('video');
-    video.srcObject = null; // ビデオストリームを解除
+    document.getElementById('video').srcObject = null;
   }
-
-  // QRコードスキャンを停止
   stopQRScan();
+}
+
+function stopQRScan() {
+  if (qrScanInterval) {
+    clearInterval(qrScanInterval);
+    qrScanInterval = null;
+  }
 }
 
 function toggleCamera() {
@@ -43,37 +95,33 @@ function toggleCamera() {
   }
 }
 
-function startQRScan() {
-  const video = document.getElementById('video');
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-
-  qrScanInterval = setInterval(() => {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-    if (code) {
-      alert(`QRコードを読み取りました: ${code.data}`);
-      stopCamera(); // QRコードを読み取ったらカメラを停止
-    }
-  }, 500); // 500msごとにスキャン
-}
-
-function stopQRScan() {
-  if (qrScanInterval) {
-    clearInterval(qrScanInterval);
-    qrScanInterval = null;
-  }
-}
-
 function navigateToHome() {
-  stopCamera(); // ホーム画面に戻る前にカメラを停止
+  stopCamera();
   window.location.href = "/";
 }
 
-// ページを離れる際にカメラを停止
+// 🔽 QRコードをFlaskに送信して画面遷移を処理
+function sendQRData(qrText) {
+  fetch("/scan", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ code: qrText })  // QRの内容を送信
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.redirect) {
+        window.location.href = data.redirect;  // 成功・失敗に応じて遷移
+      } else {
+        alert("予期せぬ応答です");
+      }
+    })
+    .catch(error => {
+      console.error("通信エラー:", error);
+      alert("QRコードの送信に失敗しました");
+    });
+}
+
+// ページ離脱時にカメラを停止
 window.addEventListener('pagehide', stopCamera);

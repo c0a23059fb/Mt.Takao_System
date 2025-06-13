@@ -10,6 +10,17 @@ services:
     depends_on:
       - db
 
+  shop_app:
+    build:
+      context: ./shop_web
+      dockerfile: Dockerfile
+    image: shop_app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
   db:
     build:
       context: ./db

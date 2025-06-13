@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クーポン使用済み</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .message-box {
+      background: #fff;
+      border: 2px solid #ff9800;
+      border-radius: 12px;
+      padding: 40px 30px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .message-box h1 {
+      color: #ff9800;
+      margin-bottom: 16px;
+    }
+    .message-box p {
+      color: #333;
+      font-size: 1.1em;
+    }
+    .back-button {
+      margin-top: 24px;
+      padding: 10px 32px;
+      background-color: #ff9800;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .back-button:hover {
+      background-color: #e68900;
+    }
+  </style>
+</head>
+<body>
+  <div class="message-box">
+    <h1>このクーポンは使用済みです</h1>
+    <p>読み取ったQRコードはすでに利用されています。<br>別のクーポンをご利用ください。</p>
+    <button class="back-button" onclick="window.location.href='/'">戻る</button>
+  </div>
+</body>
+</html>
