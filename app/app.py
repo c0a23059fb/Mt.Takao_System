@@ -13,7 +13,6 @@ import re
 from datetime import datetime
 import redis
 
-
 from modules.DataBase import DataBase
 
 
@@ -25,7 +24,7 @@ app = Flask(
 )
 app.secret_key = app.secret_key = 'secret_key'
 db = DataBase("db")
-r = redis.Redis()
+# r = redis.Redis()
 
 # SSL証明書のパスを設定
 load_dotenv()
@@ -141,7 +140,7 @@ def login():
 
         if result and result == password:
             session['user'] = user_name
-            r.setex(f"user:{user_name}", 36000, "logged_in")
+            # r.setex(f"user:{user_name}", 36000, "logged_in")
             print("ログイン成功")
             return render_template('login_succes.html', userid=user_name)
         else:
