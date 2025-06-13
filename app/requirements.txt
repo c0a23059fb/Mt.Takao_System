@@ -9,4 +9,3 @@ mysql-connector-python
 pymysql
 cryptography
 redis
-hashlib
