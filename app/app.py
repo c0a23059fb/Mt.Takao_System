@@ -79,7 +79,7 @@ def shop():
 
 @app.route('/scan', methods=['POST'])
 @login_required
-def scan_qr_code():
+def scan():
     """
     QRコードを読み取り、デコードするエンドポイント。
     POSTデータとしてBase64形式の画像を受け取り、QRコードをデコードします。
@@ -166,28 +166,41 @@ def coupons():
     valid = db.select_coupon_valid(session['user'])
     return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
 
-@app.route('/upload_photo', methods=['POST'])
-def upload_photo():
+@app.route('/photo_data', methods=['POST'])
+def photo_data():
     """
     クライアントから送信された写真をデータベースに保存し、認証結果を返すエンドポイント。
     """
     data = request.get_json()
+    print("upload_photo received data:", data)
+
+    # 画像データの確認
     if 'image' not in data:
         return jsonify({"success": False, "error": "No image provided"})
+
+    # 緯度・経度の取得（任意項目として扱う）
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    print(f"Received coordinates: latitude={latitude}, longitude={longitude}")
+
     try:
-        # Base64のヘッダーを除去して画像を保存
+        # Base64のヘッダーを除去して画像をデコード
         img_data = re.sub('^data:image/.+;base64,', '', data['image'])
         img_binary = base64.b64decode(img_data)
 
         os.makedirs('memorys', exist_ok=True)
         filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
         filepath = f'memorys/{filename}'
+
         with open(filepath, 'wb') as f:
             f.write(img_binary)
 
-        # ここで認証処理を行い、成功なら success: True, 失敗なら success: False を返す
-        # result = authenticate_image_function(...)  # ←認証処理
-    #     return jsonify({"success": result})
+        # ここで緯度・経度も使って認証処理などを行うことが可能
+        # 例: authenticate_image_function(filepath, latitude, longitude)
+
+        # 今回は認証成功として返す
+        return jsonify({"success": True, "latitude": latitude, "longitude": longitude})
+
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 

@@ -262,7 +262,18 @@
       } else {
         msg.textContent = "認証失敗。もう一度撮影してください";
         btn.textContent = "カメラに戻る";
-        btn.onclick = () => { modal.style.display = 'none'; };
+        btn.onclick = async () => {
+          modal.style.display = 'none';
+          // 少し待ってからストリーム再取得（startCameraを再呼び出し）
+          setTimeout(async () => {
+            try {
+              await startCamera();  // これでストリームをリセットする
+              console.log('カメラ再開成功');
+            } catch (e) {
+              console.warn('カメラ再開失敗:', e);
+            }
+          }, 200); // 遅延を200msに伸ばす
+        };
       }
     }
 
@@ -275,10 +286,10 @@
 
       const imgData = canvas.toDataURL('image/png');
 
-      showLoading(); // 検証中モーダル表示
+      showLoading();
 
       try {
-        const response = await fetch('/scan', {
+        const response = await fetch('/photo_data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: imgData })
@@ -290,7 +301,16 @@
         hideLoading();
         alert('通信エラー: ' + error.message);
       }
+
+      // 動画を再生再開を強制的にやってみる
+      try {
+        await video.play();
+        console.log('動画再生再開に成功');
+      } catch (e) {
+        console.warn('動画の再生再開に失敗:', e);
+      }
     }
+
 
     window.addEventListener('DOMContentLoaded', startCamera);
   </script>
