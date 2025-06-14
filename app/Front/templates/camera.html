@@ -1,318 +1,410 @@
 <!DOCTYPE html>
 <html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>カメラ撮影</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #111;
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>カメラ撮影</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #111;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+      .camera-header {
+        width: 100vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.2rem 0.5rem 1.2rem;
+        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background: linear-gradient(
+          to bottom,
+          rgba(17, 17, 17, 0.95) 70%,
+          rgba(17, 17, 17, 0) 100%
+        );
+        border-bottom: 1.5px solid #222;
+        backdrop-filter: blur(4px);
+      }
 
-    .camera-header {
-      width: 100vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.2rem 0.5rem 1.2rem;
-      box-sizing: border-box;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 10;
-      background: linear-gradient(to bottom, rgba(17, 17, 17, 0.95) 70%, rgba(17, 17, 17, 0.0) 100%);
-      border-bottom: 1.5px solid #222;
-      backdrop-filter: blur(4px);
-    }
+      .camera-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+      }
 
-    .camera-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-    }
+      .close-button {
+        background: #ff4d4d;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        font-size: 1.3rem;
+        text-align: center;
+        line-height: 38px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        transition: background 0.2s;
+      }
 
-    .close-button {
-      background: #ff4d4d;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      font-size: 1.3rem;
-      text-align: center;
-      line-height: 38px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-      transition: background 0.2s;
-    }
+      .close-button:hover {
+        background: #e60000;
+      }
 
-    .close-button:hover {
-      background: #e60000;
-    }
-
-    .camera-frame {
-      width: 100vw;
-      max-width: 430px;
-      aspect-ratio: 3/4;
-      height: calc(100vh - 80px - 110px);
-      margin-top: 80px;
-      margin-bottom: 110px;
-      border-radius: 24px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-      background: #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    @media (max-width: 600px) {
       .camera-frame {
-        width: 98vw;
-        max-width: 98vw;
-        border-radius: 0;
+        width: 100vw;
+        max-width: 430px;
+        aspect-ratio: 3/4;
+        height: calc(100vh - 80px - 110px);
+        margin-top: 80px;
+        margin-bottom: 110px;
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        background: #222;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-    }
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #222;
-    }
+      @media (max-width: 600px) {
+        .camera-frame {
+          width: 98vw;
+          max-width: 98vw;
+          border-radius: 0;
+        }
+      }
 
-    .scan-guide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      border: 2.5px solid #00eaff;
-      border-radius: 24px;
-      box-sizing: border-box;
-      opacity: 0.7;
-    }
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #222;
+      }
 
-    .camera-footer {
-      width: 100vw;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      padding-bottom: 2.5rem;
-      z-index: 10;
-      background: linear-gradient(to top, rgba(17, 17, 17, 0.95) 60%, rgba(17, 17, 17, 0.0) 100%);
-      border-top: 1.5px solid #222;
-      backdrop-filter: blur(4px);
-    }
+      .scan-guide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        border: 2.5px solid #00eaff;
+        border-radius: 24px;
+        box-sizing: border-box;
+        opacity: 0.7;
+      }
 
-    .camera-btn {
-      background: #00eaff;
-      border: none;
-      border-radius: 50%;
-      width: 64px;
-      height: 64px;
-      margin: 1.2rem 0 0.5rem 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+      .camera-footer {
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding-bottom: 2.5rem;
+        z-index: 10;
+        background: linear-gradient(
+          to top,
+          rgba(17, 17, 17, 0.95) 60%,
+          rgba(17, 17, 17, 0) 100%
+        );
+        border-top: 1.5px solid #222;
+        backdrop-filter: blur(4px);
+      }
 
-    .camera-btn:active {
-      background: #00b7c7;
-    }
+      .camera-btn {
+        background: #00eaff;
+        border: none;
+        border-radius: 50%;
+        width: 64px;
+        height: 64px;
+        margin: 1.2rem 0 0.5rem 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
 
-    .camera-btn-inner {
-      width: 44px;
-      height: 44px;
-      background: #fff;
-      border-radius: 50%;
-      border: 2px solid #00eaff;
-    }
+      .camera-btn:active {
+        background: #00b7c7;
+      }
 
-    .footer-text {
-      color: #aaa;
-      font-size: 0.95rem;
-      margin-top: 0.2rem;
-      text-align: center;
-    }
+      .camera-btn-inner {
+        width: 44px;
+        height: 44px;
+        background: #fff;
+        border-radius: 50%;
+        border: 2px solid #00eaff;
+      }
 
-    /* モーダルスタイル */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      text-align: center;
-    }
+      .footer-text {
+        color: #aaa;
+        font-size: 0.95rem;
+        margin-top: 0.2rem;
+        text-align: center;
+      }
 
-    .modal-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: -1;
-    }
+      /* モーダルスタイル */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-align: center;
+      }
 
-    .modal-content {
-      position: relative;
-      padding: 2rem;
-      background: rgba(17, 17, 17, 0.95);
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-    }
+      .modal-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+      }
 
-    #result-btn {
-      margin-top: 24px;
-      padding: 10px 32px;
-      background: #00eaff;
-      color: #111;
-      border: none;
-      border-radius: 6px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-  </style>
-</head>
+      .modal-content {
+        position: relative;
+        padding: 2rem;
+        background: rgba(17, 17, 17, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      }
 
-<body>
-  <div class="camera-header">
-    <span class="camera-title">カメラ撮影</span>
-    <button class="close-button" onclick="window.location.href='/'">×</button>
-  </div>
+      #result-btn {
+        margin-top: 24px;
+        padding: 10px 32px;
+        background: #00eaff;
+        color: #111;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-  <div class="camera-frame">
-    <video id="camera" autoplay playsinline></video>
-    <div class="scan-guide"></div>
-    <canvas id="snapshot" style="display:none; position:absolute; top:0; left:0;"></canvas>
-  </div>
+  <body>
+    <div class="camera-header">
+      <span class="camera-title">カメラ撮影</span>
+      <button class="close-button" onclick="window.location.href='/'">×</button>
+    </div>
 
-  <div class="camera-footer">
-    <button class="camera-btn" onclick="capturePhoto()">
-      <div class="camera-btn-inner"></div>
-    </button>
-    <div class="footer-text">撮影ボタンを押してください</div>
-  </div>
+    <div class="camera-frame">
+      <video id="camera" autoplay playsinline></video>
+      <div class="scan-guide"></div>
+      <canvas
+        id="snapshot"
+        style="display: none; position: absolute; top: 0; left: 0"
+      ></canvas>
+    </div>
 
-  <!-- 検証中モーダル -->
-  <div id="loading-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; color:#fff; font-size:1.5em;">
-    <div>検証中です。しばらくお待ちください...</div>
-  </div>
-  <!-- 結果モーダル -->
-  <div id="result-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; flex-direction:column; color:#fff; text-align:center;">
-    <div id="result-message"></div>
-    <button id="result-btn" style="margin-top:24px; padding:10px 32px; background:#00eaff; color:#111; border:none; border-radius:6px; font-size:1em; cursor:pointer;">OK</button>
-  </div>
+    <div class="camera-footer">
+      <button class="camera-btn" onclick="capturePhoto()">
+        <div class="camera-btn-inner"></div>
+      </button>
+      <div class="footer-text">撮影ボタンを押してください</div>
+    </div>
 
-  <script>
-    const video = document.getElementById('camera');
+    <!-- 検証中モーダル -->
+    <div
+      id="loading-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.5em;
+      "
+    >
+      <div>検証中です。しばらくお待ちください...</div>
+    </div>
+    <!-- 結果モーダル -->
+    <div
+      id="result-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #fff;
+        text-align: center;
+      "
+    >
+      <div id="result-message"></div>
+      <button
+        id="result-btn"
+        style="
+          margin-top: 24px;
+          padding: 10px 32px;
+          background: #00eaff;
+          color: #111;
+          border: none;
+          border-radius: 6px;
+          font-size: 1em;
+          cursor: pointer;
+        "
+      >
+        OK
+      </button>
+    </div>
 
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } },
-          audio: false
+    <script>
+      const video = document.getElementById("camera");
+
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: "environment" } },
+            audio: false,
+          });
+          video.srcObject = stream;
+        } catch (error) {
+          alert("カメラにアクセスできません: " + error.message);
+        }
+      }
+
+      function showLoading() {
+        document.getElementById("loading-modal").style.display = "flex";
+      }
+      function hideLoading() {
+        document.getElementById("loading-modal").style.display = "none";
+      }
+      function showResult(success) {
+        const modal = document.getElementById("result-modal");
+        const msg = document.getElementById("result-message");
+        const btn = document.getElementById("result-btn");
+        modal.style.display = "flex";
+        if (success) {
+          msg.textContent = "認証成功！ホーム画面に戻ります";
+          btn.textContent = "ホームへ";
+          btn.onclick = () => {
+            window.location.href = "/";
+          };
+        } else {
+          msg.textContent = "認証失敗。もう一度撮影してください";
+          btn.textContent = "カメラに戻る";
+          btn.onclick = async () => {
+            modal.style.display = "none";
+            // 少し待ってからストリーム再取得（startCameraを再呼び出し）
+            setTimeout(async () => {
+              try {
+                await startCamera(); // これでストリームをリセットする
+                console.log("カメラ再開成功");
+              } catch (e) {
+                console.warn("カメラ再開失敗:", e);
+              }
+            }, 200); // 遅延を200msに伸ばす
+          };
+        }
+      }
+
+      async function capturePhoto() {
+        const canvas = document.getElementById("snapshot");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imgData = canvas.toDataURL("image/png");
+
+        // 位置情報を取得
+        let coords = { latitude: null, longitude: null };
+        try {
+          coords = await getCurrentPosition();
+          console.log(
+            `位置情報取得成功: ${coords.latitude}, ${coords.longitude}`
+          );
+        } catch (e) {
+          console.warn("位置情報の取得に失敗しました:", e.message);
+        }
+
+        showLoading();
+
+        try {
+          const response = await fetch("/photo_data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: imgData,
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            }),
+          });
+          const result = await response.json();
+          hideLoading();
+          showResult(result.success);
+        } catch (error) {
+          hideLoading();
+          alert("通信エラー: " + error.message);
+        }
+
+        // 動画の再生再開
+        try {
+          await video.play();
+          console.log("動画再生再開に成功");
+        } catch (e) {
+          console.warn("動画の再生再開に失敗:", e);
+        }
+      }
+
+      function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("Geolocation is not supported."));
+          } else {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                resolve({
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                });
+              },
+              (error) => reject(error),
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          }
         });
-        video.srcObject = stream;
-      } catch (error) {
-        alert("カメラにアクセスできません: " + error.message);
-      }
-    }
-
-    function showLoading() {
-      document.getElementById('loading-modal').style.display = 'flex';
-    }
-    function hideLoading() {
-      document.getElementById('loading-modal').style.display = 'none';
-    }
-    function showResult(success) {
-      const modal = document.getElementById('result-modal');
-      const msg = document.getElementById('result-message');
-      const btn = document.getElementById('result-btn');
-      modal.style.display = 'flex';
-      if (success) {
-        msg.textContent = "認証成功！ホーム画面に戻ります";
-        btn.textContent = "ホームへ";
-        btn.onclick = () => { window.location.href = "/"; };
-      } else {
-        msg.textContent = "認証失敗。もう一度撮影してください";
-        btn.textContent = "カメラに戻る";
-        btn.onclick = async () => {
-          modal.style.display = 'none';
-          // 少し待ってからストリーム再取得（startCameraを再呼び出し）
-          setTimeout(async () => {
-            try {
-              await startCamera();  // これでストリームをリセットする
-              console.log('カメラ再開成功');
-            } catch (e) {
-              console.warn('カメラ再開失敗:', e);
-            }
-          }, 200); // 遅延を200msに伸ばす
-        };
-      }
-    }
-
-    async function capturePhoto() {
-      const canvas = document.getElementById('snapshot');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      const imgData = canvas.toDataURL('image/png');
-
-      showLoading();
-
-      try {
-        const response = await fetch('/photo_data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: imgData })
-        });
-        const result = await response.json();
-        hideLoading();
-        showResult(result.success);
-      } catch (error) {
-        hideLoading();
-        alert('通信エラー: ' + error.message);
       }
 
-      // 動画を再生再開を強制的にやってみる
-      try {
-        await video.play();
-        console.log('動画再生再開に成功');
-      } catch (e) {
-        console.warn('動画の再生再開に失敗:', e);
-      }
-    }
-
-
-    window.addEventListener('DOMContentLoaded', startCamera);
-  </script>
-</body>
+      window.addEventListener("DOMContentLoaded", startCamera);
+    </script>
+  </body>
 </html>
