@@ -247,6 +247,11 @@ html {
   margin-bottom: 0.5rem;
 }
 
+img {
+  width: 64px;
+  height: 64px;
+}
+
 @media (max-width: 768px) {
   .quick-actions {
     flex-direction: column;
@@ -261,3 +266,4 @@ html {
     border-top: none;
   }
 }
+
