@@ -124,6 +124,13 @@
     .home-box button:hover {
       background-color: #0056b3;
     }
+
+    .button-image {
+      width: 50px;
+      height: 50px;
+      display: block;
+      margin: 0 auto 0.5rem auto;
+    }
   </style>
 </head>
 
@@ -134,17 +141,17 @@
 
   <div class="quick-actions">
     <div class="action-button" onclick="navigateToQR()">
-      <img src="{{ url_for('static', filename='images/camera.webp') }}" alt="カメラ" >
+      <img src="{{ url_for('static', filename='images/camera.webp') }}" alt="カメラ" class="button-image">
       <p>カメラ</p>
     </div>
 
     <div class="action-button" onclick="navigateToCoupons()">
-      <img src="{{ url_for('static', filename='images/coupon.webp') }}" alt="所有クーポン">
+      <img src="{{ url_for('static', filename='images/coupon.webp') }}" alt="クーポン" class="button-image">
       <p>所有クーポン</p>
     </div>
-
+    
     <div class="action-button" onclick="navigateToShop()">
-      <img src="{{ url_for('static', filename='images/shop.webp') }}" alt="周辺検索">
+      <img src="{{ url_for('static', filename='images/shop.webp') }}" alt="周辺検索" class="button-image">
       <p>周辺検索</p>
     </div>
     <div class="divider"></div>
