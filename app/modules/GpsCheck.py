@@ -25,6 +25,12 @@ def gps_checkpoint(lat, lon, gps_list=GPS, radius=150):
             return True
     return False
 
+def gps_goal(lat, lon, gps_list=(35.62501833333334, 139.2435133333333), radius=150):
+    for ref_lat, ref_lon in gps_list:
+        if is_within_radius(lat, lon, ref_lat, ref_lon, radius):
+            return True
+    return False
+
 # 使用例
 # input_lat = 0
 # input_lon = 0
