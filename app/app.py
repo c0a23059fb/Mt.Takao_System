@@ -15,6 +15,7 @@ import hashlib
 # import redis
 
 from modules.DataBase import DataBase
+from modules.GpsCheck import gps_check
 
 
 # Flaskアプリケーションの初期化
@@ -172,7 +173,7 @@ def photo_data():
     クライアントから送信された写真をデータベースに保存し、認証結果を返すエンドポイント。
     """
     data = request.get_json()
-    print("upload_photo received data:", data)
+    # print("upload_photo received data:", data)
 
     # 画像データの確認
     if 'image' not in data:
@@ -198,8 +199,9 @@ def photo_data():
         # ここで緯度・経度も使って認証処理などを行うことが可能
         # 例: authenticate_image_function(filepath, latitude, longitude)
 
-        # 今回は認証成功として返す
-        return jsonify({"success": True, "latitude": latitude, "longitude": longitude})
+        check = gps_check(float(latitude), float(longitude))
+        print(f"GPSチェック結果: {check}")
+        return jsonify({"success": check, "latitude": latitude, "longitude": longitude})
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
