@@ -1,21 +1,22 @@
-from flask import Flask, request, session, redirect, url_for, jsonify, render_template
-import base64
-from io import BytesIO
-from PIL import Image
-import cv2
-import numpy as np
-import pyzbar.pyzbar as pyzbar
 import os
-import ssl
-from dotenv import load_dotenv
-from functools import wraps
 import re
+import ssl
+from io import BytesIO
 from datetime import datetime
 import hashlib
+
+from flask import Flask, request, session, redirect, url_for, jsonify, render_template
+from dotenv import load_dotenv
+from functools import wraps
+import base64
+import numpy as np
+import cv2
+from PIL import Image
+import pyzbar.pyzbar as pyzbar
 # import redis
 
 from modules.DataBase import DataBase
-from modules.GpsCheck import gps_check
+from modules.GpsCheck import gps_checkpoint, gps_goal
 
 
 # Flaskアプリケーションの初期化
@@ -199,7 +200,14 @@ def photo_data():
         # ここで緯度・経度も使って認証処理などを行うことが可能
         # 例: authenticate_image_function(filepath, latitude, longitude)
 
-        check = gps_check(float(latitude), float(longitude))
+        check = gps_checkpoint(float(latitude), float(longitude))
+        
+        # if デー^他ベース上のチェックポイントがFalse:
+        #     check = gps_goal(float(latitude), float(longitude))
+        # else:
+        #     check = gps_goal(float(latitude), float(longitude))
+        # どちらもTrueならそのように表示して示す
+        
         print(f"GPSチェック結果: {check}")
         return jsonify({"success": check, "latitude": latitude, "longitude": longitude})
 
