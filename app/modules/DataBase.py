@@ -47,14 +47,37 @@ class DataBase():
         db.close()
         return result[0]
 
-    def checkAgoal(self, user_name):
+    def checkPoint(self, user_name):
         id = self.select_id(user_name)
-        query = "SELECT check_valid, goal_valid FROM Check_Point WHERE user_id = %s"
+        query = "SELECT check_valid FROM Check_Point WHERE user_id = %s"
         db = self.connect()
         cursor = db.cursor()
         cursor.execute(query, (id,))
         result = cursor.fetchall()[0]
         db.close()
-        if result == (1, 1):
+        if result[0] == 1:
             return True
         return False
+
+    def goal(self, user_name):
+        id = self.select_id(user_name)
+        query = "SELECT goal_valid FROM Check_Point WHERE user_id = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (id,))
+        result = cursor.fetchall()[0]
+        db.close()
+        if result[0] == 1:
+            return True
+        return False
+
+    def checkAgoal(self, user_name):
+        result = (self.checkPoint(user_name), self.goal(user_name))
+        if result == (True, True):
+            return True
+        return False
+
+
+if __name__ == "__main__":
+    db = DataBase()
+    print(db.checkAgoal("user100"))

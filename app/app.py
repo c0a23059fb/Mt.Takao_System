@@ -38,6 +38,7 @@ key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # SS
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(cert_path, key_path)
 
+
 def hash_md5(text: str) -> str:
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
@@ -194,17 +195,17 @@ def photo_data():
         with open(filepath, 'wb') as f:
             f.write(img_binary)
 
-        # ここで緯度・経度も使って認証処理などを行うことが可能
-        # 例: authenticate_image_function(filepath, latitude, longitude)
-
         check = gps_checkpoint(float(latitude), float(longitude))
-        
-        # if デー^他ベース上のチェックポイントがFalse:
-        #     check = gps_goal(float(latitude), float(longitude))
-        # else:
-        #     check = gps_goal(float(latitude), float(longitude))
-        # どちらもTrueならそのように表示して示す
-        
+        if db.checkPoint(session['user']) == False:
+            print("チェックポイント照合")
+            check = gps_checkpoint(float(latitude), float(longitude))
+        elif db.goal(session['user']) == False:
+            print("ゴール照合")
+            check = gps_goal(float(latitude), float(longitude))
+        if db.checkAgoal(session['user']):
+            print("すでにゴール済み")
+            check = False
+
         print(f"GPSチェック結果: {check}")
         return jsonify({"success": check, "latitude": latitude, "longitude": longitude})
 
@@ -214,6 +215,7 @@ def photo_data():
 @app.route('/checkpoint')
 def checkpoint():
     return render_template('checkpoint.html')
+
 
 if __name__ == '__main__':
     """
