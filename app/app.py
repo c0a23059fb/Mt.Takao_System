@@ -202,10 +202,14 @@ def photo_data():
         if db.checkPoint(session['user']) == False:
             print("チェックポイント照合")
             check = gps_checkpoint(float(latitude), float(longitude))
+            if check:
+                db.update_check(session['user'])
         elif db.goal(session['user']) == False:
             print("ゴール照合")
             check = gps_goal(float(latitude), float(longitude))
-        if db.checkAgoal(session['user']):
+            if check:
+                db.update_goal(session['user'])
+        else:
             print("すでにゴール済み")
             check = False
 

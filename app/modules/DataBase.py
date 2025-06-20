@@ -77,7 +77,20 @@ class DataBase():
             return True
         return False
 
+    def update_check(self, user_name):
+        id = self.select_id(user_name)
+        query = "UPDATE Check_Point SET check_valid = True WHERE user_id = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (id,))
+        db.commit()
+        db.close()
 
-if __name__ == "__main__":
-    db = DataBase()
-    print(db.checkAgoal("user100"))
+    def update_goal(self, user_name):
+        id = self.select_id(user_name)
+        query = "UPDATE Check_Point SET goal_valid = True WHERE user_id = %s"
+        db = self.connect()
+        cursor = db.cursor()
+        cursor.execute(query, (id,))
+        db.commit()
+        db.close()
