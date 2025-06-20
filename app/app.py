@@ -60,7 +60,6 @@ def home():
     return render_template('Home.html')
 
 @app.route('/camera')
-@login_required
 def camera():
     """
     QRコード読み取り画面を表示するエンドポイント。
@@ -69,8 +68,19 @@ def camera():
     """
     return render_template('camera.html')
 
+@app.route('/coupons')
+def coupons():
+    """
+    所有しているクーポンを表示するエンドポイント。
+    Returns:
+        HTMLテンプレート: coupons.html
+    """
+    user_name = hash_md5(session['user'])
+    coupon_data = db.checkAgoal(session['user'])
+    valid = db.select_coupon_valid(session['user'])
+    return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
+
 @app.route('/shop')
-@login_required
 def shop():
     """
     周辺検索画面を表示するエンドポイント。
@@ -155,19 +165,6 @@ def login():
         print(f"ログイン処理中のエラー: {e}")
         return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
-@app.route('/coupons')
-@login_required
-def coupons():
-    """
-    所有しているクーポンを表示するエンドポイント。
-    Returns:
-        HTMLテンプレート: coupons.html
-    """
-    user_name = hash_md5(session['user'])
-    coupon_data = db.checkAgoal(session['user'])
-    valid = db.select_coupon_valid(session['user'])
-    return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
-
 @app.route('/photo_data', methods=['POST'])
 def photo_data():
     """
@@ -215,9 +212,8 @@ def photo_data():
         return jsonify({"success": False, "error": str(e)})
 
 @app.route('/checkpoint')
-@login_required
-def viw_points():
-    return render_template("checkpoint.html")
+def checkpoint():
+    return render_template('checkpoint.html')
 
 if __name__ == '__main__':
     """

@@ -3,9 +3,18 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>高尾コネクト</title>
   <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #374151;
+      /* text-gray-700 */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
     .top-banner {
       background-color: #e0e0e0;
       text-align: center;
@@ -54,8 +63,8 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-
     /* 小さな径路写真を横スクロール */
+
     .horizontal-scroll-gallery {
       display: flex;
       overflow-x: auto;
@@ -131,6 +140,296 @@
       display: block;
       margin: 0 auto 0.5rem auto;
     }
+    /* Main Container: min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 */
+
+    .main-container {
+      min-height: 100vh;
+      background-image: linear-gradient(to bottom right, #ecfdf5, #f0fdfa, #ecfeff);
+    }
+    /* --- Hero Section --- */
+
+    .hero-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(16, 185, 129, 0.2), rgba(13, 148, 136, 0.2));
+      z-index: 10;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 16rem;
+      /* h-64 */
+      object-fit: cover;
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-text-container {
+      text-align: center;
+      color: white;
+    }
+
+    .hero-icon {
+      margin: 0 auto 1rem;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+    }
+
+    .hero-title {
+      font-size: 1.875rem;
+      /* text-3xl */
+      font-weight: 700;
+      /* font-bold */
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      /* text-lg */
+      opacity: 0.9;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+      margin: 0;
+    }
+    /* --- Quick Actions Section --- */
+
+    .actions-section {
+      padding: 2rem 1rem;
+    }
+
+    .actions-container {
+      max-width: 56rem;
+      /* max-w-4xl */
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      /* text-2xl */
+      font-weight: 700;
+      color: #1f2937;
+      /* text-gray-800 */
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      /* grid-cols-1 */
+      gap: 1.5rem;
+    }
+    /* --- Card Styles --- */
+
+    .card {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      /* shadow-lg */
+      border-radius: 0.75rem;
+      /* Default Card radius */
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      /* hover:shadow-xl */
+      transform: translateY(-0.5rem);
+      /* hover:-translate-y-2 */
+    }
+
+    .card-content {
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .icon-wrapper {
+      width: 4rem;
+      /* w-16 */
+      height: 4rem;
+      /* h-16 */
+      margin: 0 auto 1rem;
+      border-radius: 9999px;
+      /* rounded-full */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .group:hover .icon-wrapper {
+      transform: scale(1.1);
+      /* group-hover:scale-110 */
+    }
+
+    .icon {
+      color: white;
+    }
+
+    .bg-blue {
+      background-image: linear-gradient(to bottom right, #3b82f6, #2563eb);
+    }
+
+    .bg-purple {
+      background-image: linear-gradient(to bottom right, #a855f7, #9333ea);
+    }
+
+    .bg-emerald {
+      background-image: linear-gradient(to bottom right, #10b981, #059669);
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      /* text-lg */
+      font-weight: 600;
+      /* font-semibold */
+      color: #1f2937;
+      /* text-gray-800 */
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      color: #4b5563;
+      /* text-gray-600 */
+      font-size: 0.875rem;
+      /* text-sm */
+      line-height: 1.5;
+      margin: 0;
+    }
+    /* --- Checkpoint Section --- */
+
+    .checkpoint-section {
+      padding: 0 1rem 2rem;
+    }
+
+    .checkpoint-container {
+      max-width: 42rem;
+      /* max-w-2xl */
+      margin: 0 auto;
+    }
+
+    .checkpoint-card {
+      background-image: linear-gradient(to right, #f97316, #ef4444);
+      /* from-orange-500 to-red-500 */
+      color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      /* shadow-xl */
+      overflow: hidden;
+      position: relative;
+    }
+    /* Decorative circles */
+
+    .deco-circle-1 {
+      position: absolute;
+      top: -4rem;
+      right: -4rem;
+      width: 8rem;
+      height: 8rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+    }
+
+    .deco-circle-2 {
+      position: absolute;
+      bottom: -3rem;
+      left: -3rem;
+      width: 6rem;
+      height: 6rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+    }
+
+    .checkpoint-content {
+      padding: 2rem;
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .checkpoint-icon-wrapper {
+      width: 4rem;
+      height: 4rem;
+      margin: 0 auto 1rem;
+      border-radius: 9999px;
+      background-color: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkpoint-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .checkpoint-description {
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 1.5rem;
+      line-height: 1.75;
+    }
+
+    .checkpoint-button {
+      background-color: white;
+      color: #ea580c;
+      /* text-orange-600 */
+      font-weight: 600;
+      /* font-semibold */
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 9999px;
+      /* rounded-full */
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      /* shadow-lg */
+    }
+
+    .checkpoint-button:hover {
+      background-color: #f3f4f6;
+      /* hover:bg-gray-100 */
+      transform: scale(1.05);
+      /* hover:scale-105 */
+    }
+    /* --- Footer --- */
+
+    .footer {
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 0.875rem;
+      /* text-sm */
+      color: #6b7280;
+      /* text-gray-500 */
+    }
+    /* --- Media Queries for Responsiveness (md breakpoint) --- */
+
+    @media (min-width: 768px) {
+      .hero-image {
+        height: 20rem;
+        /* md:h-80 */
+      }
+      .hero-title {
+        font-size: 2.25rem;
+        /* md:text-4xl */
+      }
+      .actions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        /* md:grid-cols-3 */
+      }
+    }
   </style>
 </head>
 
@@ -138,53 +437,138 @@
   <div class="main-visual">
     <img src="{{ url_for('static', filename='images/top_image.webp') }}" alt="高尾山画像">
   </div>
-
-  <div class="quick-actions">
-    <div class="action-button" onclick="navigateToQR()">
-      <img src="{{ url_for('static', filename='images/camera.webp') }}" alt="カメラ" class="button-image">
-      <p>カメラ</p>
+  <div class="actions-section">
+    <div class="actions-container">
+      <div class="actions-grid">
+        <!-- カメラ -->
+        <a href="/camera" class="card group">
+          <div class="card-content">
+            <div class="icon-wrapper bg-blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z">
+                </path>
+                <circle cx="12" cy="13" r="3">
+                </circle>
+              </svg>
+            </div>
+            <h3 class="card-title">カメラ</h3>
+            <p class="card-description">QRコードを読み取って
+              <br>チェックポイントを記録</p>
+          </div>
+        </a>
+        <!-- 所有クーポン -->
+        <a href="/coupons" class="card group">
+          <div class="card-content">
+            <div class="icon-wrapper bg-purple">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <polyline points="20 12 20 22 4 22 4 12">
+                </polyline>
+                <rect x="2" y="7" width="20" height="5">
+                </rect>
+                <line x1="12" y1="22" x2="12" y2="7">
+                </line>
+                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z">
+                </path>
+                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="card-title">所有クーポン</h3>
+            <p class="card-description">獲得したクーポンを
+              <br>確認・利用する</p>
+          </div>
+        </a>
+        <!-- 周辺検索 -->
+        <a href="/shop" class="card group">
+          <div class="card-content">
+            <div class="icon-wrapper bg-emerald">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z">
+                </path>
+                <circle cx="12" cy="10" r="3">
+                </circle>
+              </svg>
+            </div>
+            <h3 class="card-title">周辺検索</h3>
+            <p class="card-description">近くのお店や
+              <br>施設を探す</p>
+          </div>
+        </a>
+      </div>
     </div>
-
-    <div class="action-button" onclick="navigateToCoupons()">
-      <img src="{{ url_for('static', filename='images/coupon.webp') }}" alt="クーポン" class="button-image">
-      <p>所有クーポン</p>
-    </div>
-    
-    <div class="action-button" onclick="navigateToShop()">
-      <img src="{{ url_for('static', filename='images/shop.webp') }}" alt="周辺検索" class="button-image">
-      <p>周辺検索</p>
-    </div>
-    <div class="divider"></div>
-    <!-- 写真ボタンは削除済み -->
   </div>
-
-  <!-- お題写真ページへのリンクを追加 -->
-  <div class="home-box" style="margin: 2rem auto; max-width: 400px;">
-    <h2>チェックポイントのお題写真</h2>
-    <p>各チェックポイントのお題写真はこちらから確認できます。</p>
-    <button onclick="window.location.href='/checkpoint'">お題写真ページへ</button>
+  <!-- チェックポイント -->
+  <div class="checkpoint-section">
+    <div class="checkpoint-container">
+      <div class="checkpoint-card">
+        <div class="deco-circle-1">
+        </div>
+        <div class="deco-circle-2">
+        </div>
+        <div class="checkpoint-content">
+          <div class="checkpoint-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="m8 3 4 8 5-5 5 15H2L8 3z">
+              </path>
+            </svg>
+          </div>
+          <h2 class="checkpoint-title">チェックポイントのお題写真</h2>
+          <p class="checkpoint-description">各チェックポイントのお題写真はこちらから確認できます。
+            <br>美しい高尾山の景色を撮影して、思い出を残しましょう。</p>
+          <a href="/checkpoint" class="checkpoint-button">お題写真ページへ</a>
+        </div>
+      </div>
+    </div>
   </div>
-
+  <footer class="footer">
+    <p>© 2025 高尾コネクト - 自然との新しいつながりを体験しよう</p>
+  </footer>
   <script>
-    function navigateToQR() {
-      // QRコード読み取りページに遷移
-      window.location.href = "/camera";
-    }
+    document.addEventListener("DOMContentLoaded", function() {
 
-    function navigateToCoupons() {
-      // クーポンページに遷移
-      window.location.href = "/coupons";
-    }
+      const navigateToQR = () => {
+        // In a real app, this would navigate to the camera page.
+        // For this example, we'll just show an alert.
+        alert("Navigating to /camera page...");
+        // window.location.href = "/camera"; 
+      }
 
-    function navigateToShop() {
-      // 周辺店舗検索ページに遷移
-      window.location.href = "/shop";
-    }
+      const navigateToCoupons = () => {
+        alert("Navigating to /coupons page...");
+        // window.location.href = "/coupons";
+      }
 
-    function navigateToCamera() {
-      // カメラ機能ページに遷移
-      window.location.href = "/camera";
-    }
+      const navigateToShop = () => {
+        alert("Navigating to /shop page...");
+        // window.location.href = "/shop";
+      }
+
+      const navigateToCheckpoint = () => {
+        alert("Navigating to /checkpoint page...");
+        // window.location.href = "/checkpoint";
+      }
+
+      // Get elements by their ID
+      const qrCard = document.getElementById("navigate-qr");
+      const couponsCard = document.getElementById("navigate-coupons");
+      const shopCard = document.getElementById("navigate-shop");
+      const checkpointButton = document.getElementById("navigate-checkpoint");
+
+      // Add click event listeners
+      if (qrCard) {
+        qrCard.addEventListener("click", navigateToQR);
+      }
+      if (couponsCard) {
+        couponsCard.addEventListener("click", navigateToCoupons);
+      }
+      if (shopCard) {
+        shopCard.addEventListener("click", navigateToShop);
+      }
+      if (checkpointButton) {
+        checkpointButton.addEventListener("click", navigateToCheckpoint);
+      }
+
+    });
   </script>
 </body>
 
