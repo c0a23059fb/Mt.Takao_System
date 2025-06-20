@@ -61,6 +61,7 @@ def home():
     return render_template('Home.html')
 
 @app.route('/camera')
+@login_required
 def camera():
     """
     QRコード読み取り画面を表示するエンドポイント。
@@ -70,6 +71,7 @@ def camera():
     return render_template('camera.html')
 
 @app.route('/coupons')
+@login_required
 def coupons():
     """
     所有しているクーポンを表示するエンドポイント。
@@ -82,6 +84,7 @@ def coupons():
     return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
 
 @app.route('/shop')
+@login_required
 def shop():
     """
     周辺検索画面を表示するエンドポイント。
@@ -213,6 +216,7 @@ def photo_data():
         return jsonify({"success": False, "error": str(e)})
 
 @app.route('/checkpoint')
+@login_required
 def checkpoint():
     return render_template('checkpoint.html')
 
