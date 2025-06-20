@@ -1,4 +1,6 @@
+.gitignore
 .env
 keys/
 *.pem
 user_data.db
+module_db

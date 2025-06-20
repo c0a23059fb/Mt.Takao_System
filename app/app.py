@@ -222,7 +222,10 @@ def photo_data():
 @app.route('/checkpoint')
 @login_required
 def checkpoint():
-    return render_template('checkpoint.html')
+    checkpoint_check = db.checkPoint(session['user'])
+    goal_check = db.checkAgoal(session['user'])
+    print(f"チェックポイント: {checkpoint_check}, ゴール: {goal_check}")
+    return render_template('checkpoint.html', checkpoint=checkpoint_check, goal=goal_check)
 
 
 if __name__ == '__main__':
