@@ -110,23 +110,36 @@
 <body>
   <div class="checkpoint-gallery">
     <h2>チェックポイントのお題写真</h2>
-    <div class="checkpoint-list">
+    <p>チェックポイント: 3箇所より任意の1箇所</p>
+    {% if not checkpoint%}
+      <div class="checkpoint-list">
+        <div class="checkpoint-item">
+          <img src="{{ url_for('static', filename='images/check01.webp') }}" alt="チェックポイント1">
+          <p>チェックポイント1</p>
+        </div>
+        <div class="checkpoint-item">
+          <img src="{{ url_for('static', filename='images/check02.webp') }}" alt="チェックポイント2">
+          <p>チェックポイント2</p>
+        </div>
+        <div class="checkpoint-item">
+          <img src="{{ url_for('static', filename='images/check03.webp') }}" alt="チェックポイント3">
+          <p>チェックポイント3</p>
+        </div>
+    {% else %}
       <div class="checkpoint-item">
-        <img src="{{ url_for('static', filename='images/check01.webp') }}" alt="チェックポイント1">
-        <p>チェックポイント1</p>
+        <p> チェックポイント通過済み </p>
       </div>
-      <div class="checkpoint-item">
-        <img src="{{ url_for('static', filename='images/check02.webp') }}" alt="チェックポイント2">
-        <p>チェックポイント2</p>
-      </div>
-      <div class="checkpoint-item">
-        <img src="{{ url_for('static', filename='images/check03.webp') }}" alt="チェックポイント3">
-        <p>チェックポイント3</p>
-      </div>
+    {% endif %}
+    {% if not goal %}
       <div class="checkpoint-item">
         <img src="{{ url_for('static', filename='images/goal.webp') }}" alt="ゴール">
         <p>ゴール</p>
       </div>
+    {% else %}
+      <div class="checkpoint-item">
+        <p> 登頂達成　特典付与済み </p>
+      </div>
+    {% endif %}
     </div>
     <button class="home-btn" onclick="window.location.href='/'">ホームに戻る</button>
   </div>
