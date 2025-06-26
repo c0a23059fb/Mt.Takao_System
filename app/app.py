@@ -38,7 +38,6 @@ key_path = os.path.join(os.path.dirname(__file__), 'keys', 'new_key.pem')   # SS
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(cert_path, key_path)
 
-
 def hash_md5(text: str) -> str:
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
@@ -61,7 +60,6 @@ def home():
     return render_template('Home.html')
 
 @app.route('/camera')
-@login_required
 def camera():
     """
     QRコード読み取り画面を表示するエンドポイント。
@@ -71,7 +69,6 @@ def camera():
     return render_template('camera.html')
 
 @app.route('/coupons')
-@login_required
 def coupons():
     """
     所有しているクーポンを表示するエンドポイント。
@@ -84,7 +81,6 @@ def coupons():
     return render_template('coupons.html',filename = f"{user_name}.png", coupons = coupon_data, resource = valid)
 
 @app.route('/shop')
-@login_required
 def shop():
     """
     周辺検索画面を表示するエンドポイント。
@@ -169,64 +165,55 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 現在のファイル�
 #         print(f"ログイン処理中のエラー: {e}")
 #         return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
-@app.route('/photo_data', methods=['POST'])
-def photo_data():
-    """
-    クライアントから送信された写真をデータベースに保存し、認証結果を返すエンドポイント。
-    """
-    data = request.get_json()
-    # print("upload_photo received data:", data)
+# @app.route('/photo_data', methods=['POST'])
+# def photo_data():
+#     """
+#     クライアントから送信された写真をデータベースに保存し、認証結果を返すエンドポイント。
+#     """
+#     data = request.get_json()
+#     # print("upload_photo received data:", data)
 
-    # 画像データの確認
-    if 'image' not in data:
-        return jsonify({"success": False, "error": "No image provided"})
+#     # 画像データの確認
+#     if 'image' not in data:
+#         return jsonify({"success": False, "error": "No image provided"})
 
-    # 緯度・経度の取得（任意項目として扱う）
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-    print(f"Received coordinates: latitude={latitude}, longitude={longitude}")
+#     # 緯度・経度の取得（任意項目として扱う）
+#     latitude = data.get('latitude')
+#     longitude = data.get('longitude')
+#     print(f"Received coordinates: latitude={latitude}, longitude={longitude}")
 
-    try:
-        # Base64のヘッダーを除去して画像をデコード
-        img_data = re.sub('^data:image/.+;base64,', '', data['image'])
-        img_binary = base64.b64decode(img_data)
+#     try:
+#         # Base64のヘッダーを除去して画像をデコード
+#         img_data = re.sub('^data:image/.+;base64,', '', data['image'])
+#         img_binary = base64.b64decode(img_data)
 
-        os.makedirs('memorys', exist_ok=True)
-        filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
-        filepath = f'memorys/{filename}'
+#         os.makedirs('memorys', exist_ok=True)
+#         filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.png'
+#         filepath = f'memorys/{filename}'
 
-        with open(filepath, 'wb') as f:
-            f.write(img_binary)
+#         with open(filepath, 'wb') as f:
+#             f.write(img_binary)
 
-        check = gps_checkpoint(float(latitude), float(longitude))
-        if db.checkPoint(session['user']) == False:
-            print("チェックポイント照合")
-            check = gps_checkpoint(float(latitude), float(longitude))
-            if check:
-                db.update_check(session['user'])
-        elif db.goal(session['user']) == False:
-            print("ゴール照合")
-            check = gps_goal(float(latitude), float(longitude))
-            if check:
-                db.update_goal(session['user'])
-        else:
-            print("すでにゴール済み")
-            check = False
+#         # ここで緯度・経度も使って認証処理などを行うことが可能
+#         # 例: authenticate_image_function(filepath, latitude, longitude)
 
-        print(f"GPSチェック結果: {check}")
-        return jsonify({"success": check, "latitude": latitude, "longitude": longitude})
+#         check = gps_checkpoint(float(latitude), float(longitude))
+        
+#         # if デー^他ベース上のチェックポイントがFalse:
+#         #     check = gps_goal(float(latitude), float(longitude))
+#         # else:
+#         #     check = gps_goal(float(latitude), float(longitude))
+#         # どちらもTrueならそのように表示して示す
+        
+#         print(f"GPSチェック結果: {check}")
+#         return jsonify({"success": check, "latitude": latitude, "longitude": longitude})
 
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+#     except Exception as e:
+#         return jsonify({"success": False, "error": str(e)})
 
 @app.route('/checkpoint')
-@login_required
 def checkpoint():
-    checkpoint_check = db.checkPoint(session['user'])
-    goal_check = db.checkAgoal(session['user'])
-    print(f"チェックポイント: {checkpoint_check}, ゴール: {goal_check}")
-    return render_template('checkpoint.html', checkpoint=checkpoint_check, goal=goal_check)
-
+    return render_template('checkpoint.html')
 
 if __name__ == '__main__':
     """
