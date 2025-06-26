@@ -41,16 +41,16 @@ context.load_cert_chain(cert_path, key_path)
 def hash_md5(text: str) -> str:
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user' not in session:
-            return redirect(url_for('login'))  # ログインページにリダイレクト
-        return f(*args, **kwargs)
-    return decorated_function
+# def login_required(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         if 'user' not in session:
+#             return redirect(url_for('login'))  # ログインページにリダイレクト
+#         return f(*args, **kwargs)
+#     return decorated_function
 
 @app.route('/')
-@login_required
+# @login_required
 def home():
     """
     ホーム画面を表示するエンドポイント。
@@ -90,7 +90,7 @@ def shop():
     return render_template('shop.html')
 
 @app.route('/scan', methods=['POST'])
-@login_required
+# @login_required
 def scan():
     """
     QRコードを読み取り、デコードするエンドポイント。
@@ -121,49 +121,49 @@ def scan():
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 現在のファイルのディレクトリを取得
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """
-    ログイン画面を表示し、ユーザー情報をデータベースに保存するエンドポイント。
-    - GET（通常）：ログイン画面を表示
-    - GET（QRコード経由）：クエリでログイン試行
-    - POST（フォーム送信）：ログイン試行
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     """
+#     ログイン画面を表示し、ユーザー情報をデータベースに保存するエンドポイント。
+#     - GET（通常）：ログイン画面を表示
+#     - GET（QRコード経由）：クエリでログイン試行
+#     - POST（フォーム送信）：ログイン試行
 
-    Returns:
-        login_succes.html（成功時）、
-        login.html（エラー時またはGET時）
-    """
-    if 'user' in session:
-        return redirect(url_for('home'))
+#     Returns:
+#         login_succes.html（成功時）、
+#         login.html（エラー時またはGET時）
+#     """
+#     if 'user' in session:
+#         return redirect(url_for('home'))
 
-    if request.method == 'POST':
-        user_name = request.form.get('user_name')
-        password = request.form.get('password')
-    else:
-        # クエリパラメータから取得（QRコードからの自動ログイン用）
-        user_name = request.args.get('user_name')
-        password = request.args.get('password')
+#     if request.method == 'POST':
+#         user_name = request.form.get('user_name')
+#         password = request.form.get('password')
+#     else:
+#         # クエリパラメータから取得（QRコードからの自動ログイン用）
+#         user_name = request.args.get('user_name')
+#         password = request.args.get('password')
 
-        # クエリが無い通常GETアクセスなら、ログイン画面を表示
-        if not user_name or not password:
-            return render_template('login.html')
+#         # クエリが無い通常GETアクセスなら、ログイン画面を表示
+#         if not user_name or not password:
+#             return render_template('login.html')
 
-    print(f"[ログイン試行] user_name: {user_name}, password: {password}")
+#     print(f"[ログイン試行] user_name: {user_name}, password: {password}")
 
-    try:
-        result = db.select_pass(user_name)
+#     try:
+#         result = db.select_pass(user_name)
 
-        if result and result == password:
-            session['user'] = user_name
-            # r.setex(f"user:{user_name}", 36000, "logged_in")
-            print("ログイン成功")
-            return render_template('login_succes.html', userid=user_name)
-        else:
-            print("ログイン失敗：認証情報が一致しません")
-            return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
-    except Exception as e:
-        print(f"ログイン処理中のエラー: {e}")
-        return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
+#         if result and result == password:
+#             session['user'] = user_name
+#             # r.setex(f"user:{user_name}", 36000, "logged_in")
+#             print("ログイン成功")
+#             return render_template('login_succes.html', userid=user_name)
+#         else:
+#             print("ログイン失敗：認証情報が一致しません")
+#             return render_template('login.html', error="ユーザー名またはパスワードが間違っています")
+#     except Exception as e:
+#         print(f"ログイン処理中のエラー: {e}")
+#         return render_template('login.html', error="システムエラーが発生しました　再度お試しください")
 
 @app.route('/photo_data', methods=['POST'])
 def photo_data():
