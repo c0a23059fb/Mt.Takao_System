@@ -220,4 +220,13 @@ if __name__ == '__main__':
     アプリケーションのエントリーポイント。
     FlaskアプリケーションをSSLを使用して起動します。
     """
-    app.run(host='0.0.0.0', port=8000, ssl_context=context)
+    # 環境変数 DISABLE_SSL=1 をセットすると SSL を無効化して http で起動します
+    disable_ssl = os.getenv('DISABLE_SSL', '0') == '1'
+    host = '0.0.0.0'
+    port = 8000
+    if disable_ssl:
+        print(f"Starting without SSL -> http://{host}:{port}")
+        app.run(host=host, port=port)
+    else:
+        print(f"Starting with SSL -> https://{host}:{port}")
+        app.run(host=host, port=port, ssl_context=context)
